@@ -526,5 +526,5 @@ Without a strategy log, the AI repeats the same approach to the same pattern. Th
 </p>
 
 <p align="center">
-  <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Fcityjohn%2FAristos&label=Visitors" alt="Visitors" />
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=cityjohn.Aristos" alt="Visitors" />
 </p>
