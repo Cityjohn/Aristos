@@ -521,8 +521,12 @@ Without a strategy log, the AI repeats the same approach to the same pattern. Th
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=cityjohn/Aristos&type=Date&transparent=true)](https://star-history.com/#cityjohn/Aristos&Date)
+<p align="center">
+  <a href="https://star-history.com/#cityjohn/Aristos&Date" title="Star History">
+    <img src="https://api.star-history.com/svg?repos=cityjohn/Aristos&type=Date&theme=dark&transparent=true" alt="Star History Chart" width="500" />
+  </a>
+</p>
 
-<br>
-
-![Visitors](https://visitor-badge.laobi.icu/badge?page_id=cityjohn.Aristos)
+<p align="center">
+  <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Fcityjohn%2FAristos&label=Visitors&labelColor=%23555555&countColor=%23d97706" alt="Visitors" />
+</p>
