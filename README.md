@@ -521,7 +521,7 @@ Without a strategy log, the AI repeats the same approach to the same pattern. Th
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=cityjohn/Aristos&type=Date)](https://star-history.com/#cityjohn/Aristos&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=cityjohn/Aristos&type=Date&transparent=true)](https://star-history.com/#cityjohn/Aristos&Date)
 
 <br>
 
