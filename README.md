@@ -1,12 +1,16 @@
-# 🧭 Aris — Your Personal Coach & Life Navigator
+# 🧭 Aristos — A Personal Coaching Framework
 
-*An AI coaching framework built for [OpenClaw](https://github.com/openclaw) / [ZeroClaw](https://github.com/zeroclaw) and other Claw-type agents, and [n8n](https://n8n.io) automations.* *An agent that remembers, adapts, and "actually" gives a shit.*
+*A journaling and goal-tracking framework for [OpenClaw](https://github.com/openclaw) / [ZeroClaw](https://github.com/zeroclaw) and other Claw-type agents, and [n8n](https://n8n.io) automations. A method for AI agents to support the goals of their users.*
 
 ---
 
-Aris is an AI coaching system that lives inside your journal. It reads your notes, remembers your patterns, tracks your commitments, and meets you where you are — whether you're on a streak or struggling to start. It doesn't lecture. It doesn't guilt-trip. It shows up like a sharp friend who's been paying attention and actually gives a shit about where you're headed.
+**Aristos is a framework, not software.** It's a structured set of prompts, templates, and conventions that teaches any compatible AI agent how to act as a personal coach — one that reads your journal, remembers your patterns, and actually gives a shit about where you're headed.
 
-Built on structured journaling templates and adaptive coaching strategies grounded in behavioral psychology, Aris helps you cut through overwhelm, build momentum from small wins, and stay connected to the things that actually matter to you. It learns what works for you specifically — which strategies land, what time of day you're sharpest, when you need a push and when you need permission to rest — and adjusts over time.
+The agent persona is called **Aris**. Aristos is the framework that makes Aris possible: the journaling structure, the adaptive coaching logic, the memory schema, the outreach rules. Any AI agent that follows the Aristos conventions becomes Aris.
+
+Aris lives inside your journal. It reads your notes, tracks your commitments, and meets you where you are — whether you're on a streak or struggling to start. It doesn't lecture. It doesn't guilt-trip. It shows up like a sharp friend who's been paying attention.
+
+Grounded in structured journaling templates and adaptive coaching strategies from behavioral psychology, Aristos helps cut through overwhelm, build momentum from small wins, and stay connected to the things that actually matter. The framework tracks what works for each specific person — which strategies land, what time of day they're sharpest, when they need a push and when they need permission to rest — and adjusts over time.
 
 This isn't a productivity dashboard. It's a companion that grows with you.
 
@@ -64,6 +68,74 @@ Understands that resistance isn't laziness. Knows when to push and when to just 
 📂 AI Instructions - n8n/           ← pick one
 📂 AI Instructions - ZeroClaw/      ← pick one
 ```
+
+---
+
+## 📓 The Journal — 2 minutes a day
+
+The journal is the only thing you have to do. The AI handles everything else.
+
+The templates are designed to be the **minimum viable input** — enough structure that an AI agent can reason about your life across three timescales (day, week, year), but short enough that you'll actually do it. A daily note takes about two minutes. A weekly reflection takes ten, once a week. The yearly note you fill in once.
+
+That's it. The agent reads them, spots patterns you don't, and uses what it finds to coach you.
+
+---
+
+### 📄 Daily Focus Template — ~2 minutes
+
+Three sections. That's the whole thing.
+
+**Morning (~1 min):**
+
+| Section | What you write | What the agent gets |
+| --- | --- | --- |
+| **Mission and priorities** | One sentence: "My mission today is to..." + 2–4 bullet priorities | What you're trying to do today. The agent checks whether this aligns with your weekly/yearly goals and whether you're overloading yourself. |
+| **Time and metrics** | How many hours you have, the exact sequence of steps, what "done" looks like | Your capacity and your exit criteria. The agent uses this to assess whether your plan is realistic and to follow up on whether you hit it. |
+
+**Evening (~1 min):**
+
+| Section | What you write | What the agent gets |
+| --- | --- | --- |
+| **End of day review** | Gratitude, distractions, what you completed vs planned, mood/energy 1–10 | The execution gap (planned vs done), your mood trend, what's consistently getting in the way, and whether today needs a follow-up tomorrow. |
+
+> The end-of-day review is the most important section. Even one sentence per prompt is enough. The mood/energy score alone — tracked over weeks — gives the agent a reliable signal for when to push and when to back off.
+
+---
+
+### 📄 Weekly Reflection Template — ~10 minutes, once a week
+
+Two sections.
+
+| Section | What you write | What the agent gets |
+| --- | --- | --- |
+| **End of week review** | Wins, distractions, emotional moments, energy patterns — end with 3–5 bullet summary | Weekly-level patterns: which days were hardest, what kept coming up, whether the week matched the plan. Used to update strategy rotation in `MEMORY.md`. |
+| **Plans and adjustments** | Specific changes for next week: habits, time blocks, systems — end with 3–5 bullet summary | What you've decided to try differently. The agent tracks whether these adjustments actually land the following week. |
+
+---
+
+### 📄 Yearly Template — once (review quarterly)
+
+Five sections covering your year mission, concrete milestones, reverse goal mapping, and a month-by-month breakdown across all four quarters.
+
+The yearly note is the **anchor**. The agent reads it to keep day-to-day coaching connected to what you said actually mattered when you were thinking clearly about your life. It's what prevents the agent from helping you optimize tasks that shouldn't exist.
+
+---
+
+### Why this is enough
+
+The templates are structured so every field is **parseable as a coaching signal**, not just freeform journaling. `JOURNAL_READING.md` teaches the agent exactly how to interpret each one:
+
+- **Mission + priorities** → intention signal (what you thought mattered)
+- **Time and metrics** → capacity signal (how much you had to work with)
+- **Completions vs plan** → execution gap (how often your plans and reality diverge, and by how much)
+- **Distractions** → interference pattern (what keeps recurring across weeks)
+- **Mood/energy score** → baseline trend (your rhythms, your dips, your risky weeks)
+- **Weekly summary bullets** → signal compression (the agent can read these without parsing the full entry)
+- **Yearly milestones** → long-range anchor (prevents drift toward busywork)
+
+Two minutes of structured writing per day gives the agent everything it needs to coach meaningfully — not because it's a lot of data, but because it's the *right* data.
+
+---
 
 ### 📋 What's in each platform folder
 
@@ -284,100 +356,34 @@ Route to the user via Telegram, Slack, Discord, email, or any preferred channel.
 
 Below is what a complete n8n workflow looks like with the decision logic for which files to load. You'd build this as separate trigger branches that merge into a shared Code node.
 
-```
-┌─────────────────┐
-│ Schedule Trigger │──┐
-│ (morning 8am)   │  │
-└─────────────────┘  │   ┌──────────────┐
-                     ├──▶│ Code:        │
-┌─────────────────┐  │   │ Set trigger  │
-│ Schedule Trigger │──┤   │ type + roll  │
-│ (midday 12pm)   │  │   │ random gate  │
-└─────────────────┘  │   └──────┬───────┘
-                     │          │
-┌─────────────────┐  │          ▼
-│ Schedule Trigger │──┤   ┌──────────────┐
-│ (evening 9pm)   │  │   │ IF: random   │──▶ (stop — skip this run)
-└─────────────────┘  │   │ gate failed? │
-                     │   └──────┬───────┘
-┌─────────────────┐  │          │ passed
-│ Schedule Trigger │──┤          ▼
-│ (weekly Sun 6pm)│  │   ┌──────────────────────────────────┐
-└─────────────────┘  │   │ Read File: SOUL.md               │
-                     │   │ Read File: AGENTS.md             │  ← always
-┌─────────────────┐  │   │ Read File: MEMORY.md             │
-│ Webhook Trigger │──┘   └──────────────┬───────────────────┘
-│ (user chat msg) │                     │
-└─────────────────┘                     ▼
-                               ┌────────────────┐
-                               │ Code:          │
-                               │ Detect context │
-                               │ type from      │
-                               │ trigger + msg  │
-                               └───────┬────────┘
-                                       │
-                          ┌────────────┼────────────┐
-                          ▼            ▼            ▼
-                   ┌───────────┐ ┌──────────┐ ┌──────────┐
-                   │ Outreach  │ │ Coaching │ │ Chat     │
-                   │ trigger   │ │ session  │ │ (casual) │
-                   └─────┬─────┘ └────┬─────┘ └────┬─────┘
-                         │            │             │
-                         ▼            ▼             │
-                   Read File:   Read File:          │
-                   PROACTIVE_   STRATEGIES.md       │
-                   OUTREACH.md  JOURNAL_            │
-                                READING.md          │
-                                today's note        │
-                                yesterday's note    │
-                                weekly reflection   │
-                                (optional:          │
-                                 PREDICTIVE.md)     │
-                         │            │             │
-                         └────────────┼─────────────┘
-                                      ▼
-                               ┌──────────────┐
-                               │ Code:        │
-                               │ Build system │
-                               │ prompt from  │
-                               │ SOUL+AGENTS  │
-                               │              │
-                               │ Build user   │
-                               │ message from │
-                               │ trigger type │
-                               │ + loaded     │
-                               │ file contents│
-                               └──────┬───────┘
-                                      ▼
-                               ┌──────────────┐
-                               │ AI Agent     │
-                               │              │
-                               │ System:      │
-                               │  SOUL+AGENTS │
-                               │              │
-                               │ Message:     │
-                               │  trigger,    │
-                               │  memory,     │
-                               │  context     │
-                               │  files       │
-                               │              │
-                               │ Tools:       │
-                               │  Read File   │
-                               │  Write File  │
-                               │  Vector DB   │
-                               └──────┬───────┘
-                                      ▼
-                               ┌──────────────┐
-                               │ Write File:  │
-                               │ MEMORY.md    │
-                               └──────┬───────┘
-                                      ▼
-                               ┌──────────────┐
-                               │ Send Message │
-                               │ (Telegram /  │
-                               │  Slack /     │
-                               │  Discord)    │
-                               └──────────────┘
+```mermaid
+flowchart TD
+    T1[🌅 Schedule: morning 8am]
+    T2[☀️ Schedule: midday 12pm]
+    T3[🌙 Schedule: evening 9pm]
+    T4[📅 Schedule: weekly Sun 6pm]
+    T5[💬 Webhook: user chat message]
+
+    T1 & T2 & T3 & T4 & T5 --> GATE["Code\nSet trigger type\nRoll random gate"]
+
+    GATE -->|random gate failed| STOP([stop — skip this run])
+    GATE -->|passed| LOAD["Read Files — always\nSOUL.md · AGENTS.md · MEMORY.md"]
+
+    LOAD --> DETECT["Code\nDetect context type\nfrom trigger + message"]
+
+    DETECT -->|outreach trigger| OUT[Outreach]
+    DETECT -->|coaching session| COACH[Coaching]
+    DETECT -->|casual chat| CHAT[Chat]
+
+    OUT --> OUTFILES["Read File\nPROACTIVE_OUTREACH.md"]
+    COACH --> COACHFILES["Read Files\nSTRATEGIES.md\nJOURNAL_READING.md\ntoday's note\nyesterday's note\nweekly reflection\n(optional: PREDICTIVE.md)"]
+
+    OUTFILES & COACHFILES & CHAT --> BUILD["Code\nBuild system prompt: SOUL + AGENTS\nBuild user message: trigger + loaded files"]
+
+    BUILD --> AGENT["🤖 AI Agent\n─────────────────\nSystem: SOUL + AGENTS\nMessage: trigger · memory · context\nTools: Read File · Write File · Vector DB"]
+
+    AGENT --> WRITE[Write File\nMEMORY.md]
+    WRITE --> SEND[Send Message\nTelegram · Slack · Discord]
 ```
 
 > 🔑 **Key principle:** The workflow decides what to load, not the agent. Scheduled triggers always pre-load the outreach file. User-initiated messages pre-load coaching files. The agent only makes one decision on its own: "Should I also read `PREDICTIVE.md`?" — and `AGENTS.md` tells it when.
@@ -515,7 +521,7 @@ Without a strategy log, the AI repeats the same approach to the same pattern. Th
 
 ---
 
-**Built with ❤️ for people who are trying their best.**
+**For people who are trying their best.**
 
 ---
 
