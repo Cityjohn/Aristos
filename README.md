@@ -1,10 +1,10 @@
-# 🧭 Aristos — A Personal Coaching Framework
+# 🧭 Aristos — A Personal happiness Framework
 
-*A journaling and goal-tracking framework for [OpenClaw](https://github.com/openclaw) / [ZeroClaw](https://github.com/zeroclaw) and other Claw-type agents, and [n8n](https://n8n.io) automations. A method for AI agents to support the goals of their users. Pairs with [Kasmidian](https://github.com/Cityjohn/Kasmidian) for 24/7 agent access to your vault.*
+*A journaling and goal-tracking framework for [OpenClaw](https://github.com/openclaw) / [ZeroClaw](https://github.com/zeroclaw) and other Claw-type agents, and [n8n](https://n8n.io) automations. A method for AI agents to support the goals of their users. Pairs with [Kasmidian](https://github.com/Cityjohn/Kasmidian) for 24/7 agent access to your journal / obsidian vault.*
 
 ---
 
-**Aristos is a framework, not software.** It's a structured set of prompts, templates, and conventions that teaches any compatible AI agent how to act as a personal coach — one that reads your journal, remembers your patterns, and actually gives a shit about where you're headed.
+**Aristos is an agentic framework and journal template, not software.** It's a structured set of rules, prompts, templates, and conventions that teaches any compatible AI agent how to act as a personal coach — one that reads your very simple and efficient 2 minute a day journal, remembers your patterns, and actually gives a shit.
 
 The agent persona is called **Aris**. Aristos is the framework that makes Aris possible: the journaling structure, the adaptive coaching logic, the memory schema, the outreach rules. Any AI agent that follows the Aristos conventions becomes Aris.
 
@@ -13,6 +13,104 @@ Aris lives inside your journal. It reads your notes, tracks your commitments, an
 Grounded in structured journaling templates and adaptive coaching strategies from behavioral psychology, Aristos helps cut through overwhelm, build momentum from small wins, and stay connected to the things that actually matter. The framework tracks what works for each specific person — which strategies land, what time of day they're sharpest, when they need a push and when they need permission to rest — and adjusts over time.
 
 This isn't a productivity dashboard. It's a companion that grows with you.
+
+
+
+---
+
+## Contents
+
+- [📖 What it actually looks like](#-what-it-actually-looks-like)
+- [✨ Features](#-features)
+- [🚀 Quick start](#-quick-start)
+- [📁 Folder structure](#-folder-structure)
+- [📓 The Journal — 2 minutes a day](#-the-journal--2-minutes-a-day)
+  - [Daily Focus Template](#-daily-focus-template---2-minutes)
+  - [Weekly Reflection Template](#-weekly-reflection-template---10-minutes-once-a-week)
+  - [Yearly Template](#-yearly-template--once-review-quarterly)
+  - [Why this is enough](#why-this-is-enough)
+  - [🔌 The agent needs to be able to read your journal](#-the-agent-needs-to-be-able-to-read-your-journal)
+- [📋 What's in each platform folder](#-whats-in-each-platform-folder)
+- [🔄 How file loading works](#-how-file-loading-works)
+- [💰 Token load per invocation](#-token-load-per-invocation)
+- [🔧 Setup: n8n](#-setup-n8n)
+  - [Where to put the files](#-where-to-put-the-files)
+  - [Workflow structure](#-workflow-structure)
+  - [Nodes](#️-nodes)
+  - [Example workflow: file loading logic](#️-example-workflow-file-loading-logic)
+  - [Vector DB integration](#️-vector-db-integration)
+- [🐾 Setup: OpenClaw / ZeroClaw](#-setup-openclaw--zeroclaw)
+  - [How bootstrap files work](#-how-bootstrap-files-work)
+  - [Native memory + MEMORY.md](#-native-memory--memorymd)
+  - [Configuration](#️-configuration)
+- [🏗️ Key design decisions](#️-key-design-decisions)
+
+---
+
+## 📖 What it actually looks like
+
+*Happiness doesn't just happen to you, it's about what you happen to do.*
+
+The journal is just a few easy prompts. You write what's real — a big win, a hard week, a goal that has nothing to do with work. The agent builds a picture across all of it and coaches accordingly. It's for people who want to perform well *and* have a life worth performing for so you can feel like yourself again. Full example notes are in the repo — [`Journal/Day to Day/`](Journal/Day%20to%20Day/), [`Journal/Weekly reflection/`](Journal/Weekly%20reflection/), [`Journal/Yearly planning/`](Journal/Yearly%20planning/).
+
+It starts with the year. Every daily note exists inside a yearly plan broken down by quarter — so the agent always knows whether today's priorities are pointing at what actually matters, or just filling time.
+
+---
+
+**The year, mapped out by quarter**
+
+> **Mission:** This year is about building the foundation — stable income from my own work, physical consistency, and the relationships that matter most.
+>
+> **Milestones:**
+> - First paying client — Q1
+> - Consistent exercise 3×/week for 8 weeks — Q1
+> - Revenue covers monthly costs — Q2
+> - One meaningful trip with close friends or family — Q3
+> - 3-month emergency fund — Q4
+>
+> **Q1 theme — Launch and validate:** First client signed, exercise habit locked in, emergency fund started. January: define the offer and start outreach. February: first sales conversations, hit the 8-week streak. March: close the client, document the process, review and adjust.
+
+---
+
+**A day you close something**
+
+> **Mission:** My mission today is to get the contract signed before EOD.
+>
+> - Final proposal out by 10am — no more tweaking, it's good enough
+> - Follow-up call at 2pm, push for a decision
+> - Clear the backlog so tomorrow starts clean
+>
+> **End of day:** Proposal went at 9:40. They signed on the call. Inbox at zero. Three weeks of work landed today — that felt good.
+> Mood: 9 · Energy: 8
+
+---
+
+**A day you needed to recover without losing the week**
+
+> **Mission:** My mission today is to recharge without falling behind.
+>
+> - One hour of real work, then stop
+> - Get outside
+> - Call Dad — been putting it off for two weeks
+>
+> **End of day:** Did the hour, got outside twice. Called Dad — longer conversation than expected, glad I did it. Not every day is a sprint. Back at full capacity tomorrow.
+> Mood: 5 · Energy: 4
+
+---
+
+**A day that was both**
+
+> **Mission:** My mission today is to move the project forward and not cancel on Sarah again.
+>
+> - Three hours on the architecture doc
+> - Honest conversation with the team about the deadline slip
+> - Coffee with Sarah — she's reached out twice and I keep deprioritising it
+>
+> **End of day:** Doc is in better shape. Team conversation was harder than expected but the right call — they needed to hear it. Coffee with Sarah was genuinely good. Reminded me there's more to life than shipping. Mood: 7 · Energy: 6.
+
+---
+
+The agent tracks all of it over time — output, energy, what you keep postponing, who you care about, what kind of week you're in. That's what lets it coach you as a full person, not just a task list. Browse the example entries in [`Journal/Day to Day/2025-03-15.md`](Journal/Day%20to%20Day/2025-03-15.md), [`Journal/Weekly reflection/2025-W11.md`](Journal/Weekly%20reflection/2025-W11.md), and [`Journal/Yearly planning/2025.md`](Journal/Yearly%20planning/2025.md) to see the format in full.
 
 ---
 
