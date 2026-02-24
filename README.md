@@ -1,6 +1,6 @@
 # 🧭 Aristos — A Personal Coaching Framework
 
-*A journaling and goal-tracking framework for [OpenClaw](https://github.com/openclaw) / [ZeroClaw](https://github.com/zeroclaw) and other Claw-type agents, and [n8n](https://n8n.io) automations. A method for AI agents to support the goals of their users.*
+*A journaling and goal-tracking framework for [OpenClaw](https://github.com/openclaw) / [ZeroClaw](https://github.com/zeroclaw) and other Claw-type agents, and [n8n](https://n8n.io) automations. A method for AI agents to support the goals of their users. Pairs with [Kasmidian](https://github.com/Cityjohn/Kasmidian) for 24/7 agent access to your vault.*
 
 ---
 
@@ -46,7 +46,8 @@ Understands that resistance isn't laziness. Knows when to push and when to just 
   - `AI Instructions - n8n/` — for n8n workflow automation
   - `AI Instructions - ZeroClaw/` — for OpenClaw/ZeroClaw/Agent-0
 4. 🗑️ Delete the other one
-5. 📖 Follow the platform-specific setup below
+5. 🖥️ Make the vault accessible to your agent — if you use Obsidian, [Kasmidian](https://github.com/Cityjohn/Kasmidian) + Obsidian Sync is the recommended setup
+6. 📖 Follow the platform-specific setup below
 
 ---
 
@@ -134,6 +135,30 @@ The templates are structured so every field is **parseable as a coaching signal*
 - **Yearly milestones** → long-range anchor (prevents drift toward busywork)
 
 Two minutes of structured writing per day gives the agent everything it needs to coach meaningfully — not because it's a lot of data, but because it's the *right* data.
+
+---
+
+### 🔌 The agent needs to be able to read your journal
+
+None of this works unless the agent has **live file access to the vault**. The journal entries only become coaching data if the agent can actually open them.
+
+This means the vault — the folder containing your `Journal/` and `AI Instructions/` files — needs to live somewhere the agent can reach via the filesystem. For n8n that means a mounted path on the same host. For ZeroClaw that means a Docker volume.
+
+**If you use Obsidian to write your journal** (recommended), the simplest way to guarantee 24/7 agent access is to keep a headless Obsidian instance running on your server alongside the agent — so the vault is always present on disk, always up to date, and always readable.
+
+> #### 🖥️ [Kasmidian](https://github.com/Cityjohn/Kasmidian) — Obsidian in Docker, always on
+>
+> [Kasmidian](https://github.com/Cityjohn/Kasmidian) is a Docker Compose setup that runs Obsidian headlessly in a browser-accessible container (via KasmVNC). Deploy it on the same host as your agent and mount the vault as a shared volume — your agent always has the latest journal on disk, no syncing delay, no "file not found."
+>
+> Pair it with **Obsidian Sync**: write your daily notes on your phone or laptop as normal, Sync pushes them to the server, Kasmidian keeps the vault live on disk, and the agent reads them the moment they arrive.
+>
+> ```
+> You (phone/laptop) → Obsidian Sync → Kasmidian vault on server
+>                                              ↓
+>                                         Agent reads files
+> ```
+>
+> No local Obsidian install required on the server. No manual transfers. The vault is just always there.
 
 ---
 
@@ -433,7 +458,7 @@ services:
   agent:
     image: openclaw/zeroclaw:latest
     volumes:
-      - /path/to/obsidian/vault:/vault
+      - /path/to/kasmidian/vault:/vault
     environment:
       - WORKSPACE=/vault/AI Instructions - ZeroClaw
 ```
