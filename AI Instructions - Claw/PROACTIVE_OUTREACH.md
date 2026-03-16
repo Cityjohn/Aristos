@@ -1,7 +1,7 @@
 ---
 delivery: tool-read
 purpose: Rules for when and how to reach out unprompted — including casual, non-task check-ins. Read by the agent on each scheduled or self-initiated invocation.
-triggers: scheduled via OpenClaw/ZeroClaw heartbeat, cron job, or agent self-initiated
+triggers: scheduled via OpenClaw cron job or agent self-initiated
 ---
 
 # Proactive Outreach
@@ -20,64 +20,43 @@ For outreach invocations: `SOUL.md` and `MEMORY.md` are already loaded as bootst
 
 ## Scheduler integration
 
-### OpenClaw / ZeroClaw / Agent-0
+All proactive outreach is handled by **OpenClaw cron jobs** that run in isolated sessions. The lightweight heartbeat (`HEARTBEAT.md`) handles quick journal checks; crons handle the structured outreach triggers.
 
-These agents typically have **native memory** — they maintain conversation history and state across sessions without needing external files. Use that.
+### How cron-based outreach works
 
-- **Native memory** handles conversation context, user preferences, and relationship history automatically. The instruction files in this vault supplement native memory with structured coaching data.
-- **`MEMORY.md`** is still the structured coaching state — but the agent's own memory covers the relationship, tone, and conversational context that makes it feel like a real friend.
-- Register scheduled tasks via the agent's internal scheduler or cron system.
-- The agent should also self-initiate check-ins based on its own judgment — not only on cron schedules. If it notices something in the vault during a routine scan, it can reach out.
+Each cron job runs in its own isolated session with a self-contained prompt that instructs the agent to check context before messaging. This means:
 
-If using external cron:
-```cron
-0 8 * * * curl -X POST http://localhost:8080/trigger -d '{"type":"morning_checkin"}'
-0 12 * * * curl -X POST http://localhost:8080/trigger -d '{"type":"casual_checkin"}'
-0 21 * * * curl -X POST http://localhost:8080/trigger -d '{"type":"evening_review"}'
-0 10 * * 3 curl -X POST http://localhost:8080/trigger -d '{"type":"midweek_check"}'
-0 18 * * 0 curl -X POST http://localhost:8080/trigger -d '{"type":"weekly_reflection"}'
-0 9 * * * curl -X POST http://localhost:8080/trigger -d '{"type":"commitment_followup"}'
-*/180 * * * * curl -X POST http://localhost:8080/trigger -d '{"type":"random_ping"}'
-```
+- **No shared session state** — each cron run is independent and won't pollute the main chat
+- **Smart deduplication** — each prompt tells the agent to check if it already reached out today before sending
+- **Mode-aware** — prompts instruct the agent to check current mode in MEMORY.md and adapt tone accordingly
+- **NO_REPLY discipline** — agents reply NO_REPLY when conditions aren't met, burning zero output tokens
 
-The `random_ping` fires every 3 hours but the agent should only actually send a message ~30% of the time (random roll). This creates unpredictable, natural-feeling check-ins.
+### Cron job schedule
 
-### How ZeroClaw triggers outreach
+| Trigger | Cron | Purpose |
+|---|---|---|
+| Morning check-in | `0 8 * * *` | Daily start, reference commitments or context |
+| Noon follow-up | `35 12 * * *` | Midday check, skip if already active today |
+| Evening review | `0 21 * * *` | Prompt daily note completion / end-of-day review |
+| Midweek check | `0 10 * * 3` | Wednesday progress check against weekly goals |
+| Weekly reflection | `0 18 * * 0` | Sunday evening — prompt weekly review |
+| Lightweight heartbeat | `0 9,12,15,18,21 * * *` | Quick checks, NO_REPLY most of the time |
+| Email check (optional) | Every 60 min | Separate bot account to avoid noise in main DMs |
 
-ZeroClaw uses two mechanisms for proactive outreach:
+The full cron commands are in `AGENTS.md` under "⏰ OpenClaw Cron Setup".
 
-**1. Heartbeat (recommended):** `HEARTBEAT.md` runs every 30 minutes during active hours. It checks all trigger conditions in priority order and fires the first one that matches. Configure in `openclaw.json`:
+### How the heartbeat fits in
 
-```json
-{
-  "agents": {
-    "defaults": {
-      "heartbeat": {
-        "every": "30m",
-        "activeHours": { "start": "08:00", "end": "22:00" }
-      }
-    }
-  }
-}
-```
+The heartbeat is now lightweight — it runs via cron 5×/day and only checks:
+- Is today's daily note complete?
+- Is a commitment due?
+- Has the user been silent too long?
 
-**2. Cron jobs (for precise timing):** Use `openclaw cron add` for triggers that must fire at exact times:
+Most of the time it replies NO_REPLY. The heavy lifting (morning check-ins, evening reviews, weekly reflections) is done by dedicated cron jobs with richer prompts.
 
-```bash
-openclaw cron add --name "morning_checkin" --cron "0 8 * * *" --session isolated \
-  --message "Trigger: morning_checkin. Read PROACTIVE_OUTREACH.md and follow the rules." \
-  --announce --channel telegram
+### Agent self-initiated outreach
 
-openclaw cron add --name "evening_review" --cron "0 21 * * *" --session isolated \
-  --message "Trigger: evening_review. Read PROACTIVE_OUTREACH.md and follow the rules." \
-  --announce --channel telegram
-
-openclaw cron add --name "weekly_reflection" --cron "0 18 * * 0" --session isolated \
-  --message "Trigger: weekly_reflection. Read PROACTIVE_OUTREACH.md and follow the rules." \
-  --announce --channel telegram
-```
-
-The heartbeat handles frequent checks (commitments, wins, casual pings). Cron handles time-specific triggers (morning, evening, weekly).
+Beyond cron schedules, the agent can also self-initiate check-ins based on its own judgment during vault scans. If it notices a pattern, a win, or an anomaly in the journal, it can reach out without waiting for a scheduled trigger.
 
 ---
 
@@ -157,7 +136,7 @@ Pick from context-aware options:
 - Check on energy: "You doing okay this week? Not a work question, just asking."
 - Light humor if it fits the relationship
 
-If native agent memory has context about recent casual topics, use it. This is where OpenClaw/ZeroClaw native memory shines — it remembers the human stuff that `MEMORY.md` doesn't track.
+If native agent memory has context about recent casual topics, use it. This is where OpenClaw native memory shines — it remembers the human stuff that `MEMORY.md` doesn't track.
 
 ### `evening_review` — daily, 9pm
 
@@ -235,7 +214,7 @@ This is a soft prep nudge. If they don't respond, that's fine — the block star
 If they reply with results, log them. If they completed the task, trigger `win_reinforcement`. If they say they got distracted, don't lecture — ask what happened and log the distraction trigger in `MEMORY.md`.
 
 **Implementation:**
-- OpenClaw/ZeroClaw: Agent reads the morning note and self-programs check-ins around the stated blocks
+- OpenClaw: Agent reads the morning note and self-programs check-ins around the stated blocks
 - If no specific times are stated, skip this trigger entirely
 
 **Critical rule:** The user's focused work time is sacred. No pings, no check-ins, no "how's it going?" during a stated block. The only interaction during work time is if the user initiates it.

@@ -1,6 +1,6 @@
 ---
 bootstrap: true
-purpose: Personality, tone, and emotional awareness. Auto-loaded by ZeroClaw on every session.
+purpose: Personality, tone, and emotional awareness. Auto-loaded by OpenClaw on every session.
 ---
 
 # Soul

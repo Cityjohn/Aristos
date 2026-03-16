@@ -1,6 +1,6 @@
 ---
 bootstrap: true
-purpose: Operating instructions, adaptive mode, and file loading rules. Auto-loaded by ZeroClaw on every session.
+purpose: Operating instructions, adaptive mode, and file loading rules. Auto-loaded by OpenClaw on every session.
 ---
 
 # Agent Operating Instructions
@@ -95,28 +95,91 @@ When the mode changes, log it. When querying the vector DB for patterns, include
 
 ## Required reads — before responding
 
-ZeroClaw auto-loads this file + `SOUL.md` + `MEMORY.md` on every session. For everything else, use `read_file`:
+OpenClaw auto-loads this file + `SOUL.md` + `MEMORY.md` on every session. For everything else, use `read_file`:
 
 1. Check current mode in `MEMORY.md` (already loaded)
 2. Based on what's happening:
    - **User is talking to you (coaching session):**
      ```
-     read_file("AI Instructions - ZeroClaw/STRATEGIES.md")
-     read_file("AI Instructions - ZeroClaw/JOURNAL_READING.md")
+     read_file("AI Instructions - Claw/STRATEGIES.md")
+     read_file("AI Instructions - Claw/JOURNAL_READING.md")
      read_file("Journal/Day to Day/YYYY-MM-DD.md")  # today
      read_file("Journal/Day to Day/YYYY-MM-DD.md")  # yesterday
      ```
    - **Coaching session, not a quick check-in:**
      ```
-     read_file("AI Instructions - ZeroClaw/PREDICTIVE.md")
+     read_file("AI Instructions - Claw/PREDICTIVE.md")
      ```
    - **Outreach / heartbeat cycle:**
      ```
-     read_file("AI Instructions - ZeroClaw/PROACTIVE_OUTREACH.md")
+     read_file("AI Instructions - Claw/PROACTIVE_OUTREACH.md")
      ```
    - **Memory maintenance:**
      ```
-     read_file("AI Instructions - ZeroClaw/MEMORY_SCHEMA.md")
+     read_file("AI Instructions - Claw/MEMORY_SCHEMA.md")
      ```
 
 You only need to make one decision: "Is the user talking to me?" If yes, read `STRATEGIES.md`. Everything else is handled by bootstrap or `HEARTBEAT.md`.
+
+## 💓 Heartbeat — Lightweight
+
+The heartbeat is now lightweight — it only checks logs and nudges for journal completion. All proactive outreach (morning check-ins, evening reviews, weekly reflections) is handled by isolated cron jobs instead.
+
+See `HEARTBEAT.md` for the lightweight checklist. When polled, run through it fast and reply either with a one-sentence nudge or `HEARTBEAT_OK`.
+
+## ⏰ OpenClaw Cron Setup
+
+All proactive outreach uses isolated cron jobs. The heartbeat is lightweight — it only checks logs and nudges for journal completion.
+
+### Cron jobs to create
+
+```bash
+# Morning check-in — 8 AM daily
+openclaw cron add --name "morning-checkin" --cron "0 8 * * *" --tz "Europe/Amsterdam" \
+  --session isolated --timeout 30 \
+  --message "You are doing a morning check-in. Before messaging: (1) Check memory/YYYY-MM-DD.md (today + yesterday) and MEMORY.md for recent context, mood, active commitments. (2) Check if you already reached out today. Choose ONE approach: If active commitments from yesterday, reference one briefly. If struggling recently, keep it extra light. If momentum, celebrate it. If no context at all, one casual sentence. NEVER ask the same question twice. ONE sentence max. Casual, warm." \
+  --announce --channel telegram
+
+# Noon follow-up — 12:35 PM daily
+openclaw cron add --name "noon-followup" --cron "35 12 * * *" --tz "Europe/Amsterdam" \
+  --session isolated --timeout 30 \
+  --message "You are doing a midday follow-up. Before messaging: (1) Check today's memory/YYYY-MM-DD.md and recent context. (2) Check if user has replied to or engaged with any outreach today. Rules: If already active today, reply NO_REPLY. If morning went out but no reply, different angle — observation, memory reference, 2-minute rule suggestion, or permission to rest. ONE sentence max. Never repeat the morning message." \
+  --announce --channel telegram
+
+# Evening review — 9 PM daily
+openclaw cron add --name "evening-review" --cron "0 21 * * *" --tz "Europe/Amsterdam" \
+  --session isolated --timeout 30 \
+  --message "You are doing an evening review. Before messaging: (1) Read today's memory/YYYY-MM-DD.md and MEMORY.md. (2) Check current mode. Rules: If daily note exists with end-of-day review filled in, reply NO_REPLY. If no daily note exists: offer to write one from quick chat. If daily note exists but review blank: ask for highlights. If mode is struggling/returning: keep it extra light, offer to write it for them. ONE sentence max. Casual, warm." \
+  --announce --channel telegram
+
+# Midweek check — Wednesday 10 AM
+openclaw cron add --name "midweek-check" --cron "0 10 * * 3" --tz "Europe/Amsterdam" \
+  --session isolated --timeout 30 \
+  --message "You are doing a midweek check on Wednesday. Before messaging: (1) Check memory/YYYY-MM-DD.md files for this week and MEMORY.md. (2) Check current mode. Rules: If things going well: celebrate with specific evidence. If fewer than 2 daily notes this week: prompt with one thing to focus on before Friday. If mode is struggling/returning: keep it light, no pressure. ONE sentence max." \
+  --announce --channel telegram
+
+# Weekly reflection — Sunday 6 PM
+openclaw cron add --name "weekly-reflection" --cron "0 18 * * 0" --tz "Europe/Amsterdam" \
+  --session isolated --timeout 30 \
+  --message "You are doing a weekly reflection on Sunday evening. Before messaging: (1) Check memory/YYYY-MM-DD.md files for this week, MEMORY.md. (2) Check current mode. Rules: If weekly reflection already exists for this week, reply NO_REPLY. If struggling/returning: 'Week's done. Even just a quick sentence — how'd it go?' If baseline/momentum: ask how the week went, what worked, what didn't. ONE sentence max." \
+  --announce --channel telegram
+
+# Lightweight heartbeat — 9 AM, 12 PM, 3 PM, 6 PM, 9 PM
+openclaw cron add --name "lightweight-heartbeat" --cron "0 9,12,15,18,21 * * *" --tz "Europe/Amsterdam" \
+  --session isolated --timeout 30 \
+  --message "You are doing a lightweight heartbeat. Be fast. Check: (1) current mode in MEMORY.md, (2) today's memory/YYYY-MM-DD.md exists and is complete, (3) active commitments with follow-up dates today/yesterday. ONLY output if: missing daily note after 10 AM, incomplete daily note after 6 PM, commitment due, or 8+ hours silent during active hours. If NONE apply → reply NO_REPLY. When outputting: ONE sentence max." \
+  --announce --channel telegram
+
+# Email check (optional) — every 60 minutes, delivered to separate bot
+openclaw cron add --name "email-check" --every 3600000 \
+  --session isolated --timeout 60 \
+  --message "Check for unread emails. Summarize important ones for the user. If no new emails, reply NO_REPLY." \
+  --announce --channel telegram --account heartbeat
+```
+
+### Important notes
+- Use `--tz` to set your timezone (e.g., `Europe/Amsterdam`, `America/New_York`)
+- All outreach crons use `--session isolated` to avoid blocking the main chat
+- The `lightweight-heartbeat` replies NO_REPLY most of the time — zero output tokens when nothing needs attention
+- The email check can use a separate Telegram bot account to keep noise out of main DMs
+- Adjust `--cron` expressions to your timezone and preferred times

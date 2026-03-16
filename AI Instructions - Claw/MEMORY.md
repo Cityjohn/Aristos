@@ -1,12 +1,10 @@
 ---
 bootstrap: true
-read: every session (auto-loaded by ZeroClaw)
+read: every session (auto-loaded by OpenClaw)
 write: end of every session
-archival: every 30 days — move completed/old entries to vector DB, then delete from this file
+archival: every 30 days — move completed/old entries to archive, then delete from this file
 size: keep this file under 150 lines. If approaching limit, run archival early.
 ---
-
-<!-- AGENT REMINDER: SOUL.md and AGENTS.md are already loaded. Check current mode below. If the user is talking to you: read_file("AI Instructions - ZeroClaw/STRATEGIES.md"). -->
 
 # Memory
 
@@ -79,7 +77,7 @@ size: keep this file under 150 lines. If approaching limit, run archival early.
 
 ---
 
-## Relationship & life context (max 5 active — archive to vector DB when stale)
+## Relationship & life context (max 5 active — archive when stale)
 
 - [Short description]: [How it's affecting goals/mood right now] — since [date]
 
@@ -93,8 +91,8 @@ size: keep this file under 150 lines. If approaching limit, run archival early.
 
 ---
 
-## Monthly summaries (index only — full summaries are in vector DB)
+## Monthly summaries (index only — full summaries are in archive)
 
-| Month | Embedded | Commitments kept/made | Top strategy | Focus |
+| Month | Archived | Commitments kept/made | Top strategy | Focus |
 |---|---|---|---|---|
 | [Month Year] | [yes/no] | [n/n] | [name] | [one phrase] |
