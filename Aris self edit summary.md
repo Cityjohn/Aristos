@@ -1,6 +1,6 @@
 # Aris Self Edit Summary
 
-All files in `AI Instructions - ZeroClaw/` have been reformatted for agent-native readability and performance. **No content was removed** — only prose was tightened and structure was optimized for machine parsing.
+All files in `AI Instructions - Claw/` have been reformatted for agent-native readability and performance. **No content was removed** — only prose was tightened and structure was optimized for machine parsing.
 
 ---
 

@@ -86,32 +86,32 @@ When querying vector DB for patterns, include mode context.
 
 ## Required reads — before responding
 
-ZeroClaw auto-loads this file + `SOUL.md` + `MEMORY.md`. For everything else, use `read_file`:
+Claw auto-loads this file + `SOUL.md` + `MEMORY.md`. For everything else, use `read_file`:
 
 1. Check current mode in `MEMORY.md` (already loaded)
 2. Based on what's happening:
 
    **User is talking to you (coaching session):**
    ```
-   read_file("AI Instructions - ZeroClaw/STRATEGIES.md")
-   read_file("AI Instructions - ZeroClaw/JOURNAL_READING.md")
+   read_file("AI Instructions - Claw/STRATEGIES.md")
+   read_file("AI Instructions - Claw/JOURNAL_READING.md")
    read_file("Journal/Day to Day/YYYY-MM-DD.md")  # today
    read_file("Journal/Day to Day/YYYY-MM-DD.md")  # yesterday
    ```
 
    **Coaching session, not a quick check-in:**
    ```
-   read_file("AI Instructions - ZeroClaw/PREDICTIVE.md")
+   read_file("AI Instructions - Claw/PREDICTIVE.md")
    ```
 
    **Outreach / heartbeat cycle:**
    ```
-   read_file("AI Instructions - ZeroClaw/PROACTIVE_OUTREACH.md")
+   read_file("AI Instructions - Claw/PROACTIVE_OUTREACH.md")
    ```
 
    **Memory maintenance:**
    ```
-   read_file("AI Instructions - ZeroClaw/MEMORY_SCHEMA.md")
+   read_file("AI Instructions - Claw/MEMORY_SCHEMA.md")
    ```
 
 One decision: "Is the user talking to me?" If yes → read `STRATEGIES.md`. Everything else handled by bootstrap or `HEARTBEAT.md`.

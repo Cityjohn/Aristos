@@ -1,7 +1,7 @@
 ---
 delivery: tool-read
 purpose: Rules for when and how to reach out unprompted — including casual, non-task check-ins. Read by the agent on each scheduled or self-initiated invocation.
-triggers: scheduled via n8n workflow, cron job, OpenClaw/ZeroClaw native scheduler, or Agent-0 self-programmed cron
+triggers: scheduled via n8n workflow, cron job, OpenClaw/Claw native scheduler, or Agent-0 self-programmed cron
 ---
 
 # Proactive Outreach
@@ -124,7 +124,7 @@ Pick from context-aware options:
 - Check on energy: "You doing okay this week? Not a work question, just asking."
 - Light humor if it fits the relationship
 
-If native agent memory has context about recent casual topics, use it. This is where OpenClaw/ZeroClaw native memory shines — it remembers the human stuff that `MEMORY.md` doesn't track.
+If native agent memory has context about recent casual topics, use it. This is where OpenClaw/Claw native memory shines — it remembers the human stuff that `MEMORY.md` doesn't track.
 
 ### `evening_review` — daily, 9pm
 
@@ -203,7 +203,7 @@ If they reply with results, log them. If they completed the task, trigger `win_r
 
 **Implementation:**
 - n8n: Code node parses Time and metrics section, extracts times, creates dynamic Schedule nodes or uses Wait nodes
-- OpenClaw/ZeroClaw: Agent reads the morning note and self-programs check-ins around the stated blocks
+- OpenClaw/Claw: Agent reads the morning note and self-programs check-ins around the stated blocks
 - If no specific times are stated, skip this trigger entirely
 
 **Critical rule:** The user's focused work time is sacred. No pings, no check-ins, no "how's it going?" during a stated block. The only interaction during work time is if the user initiates it.

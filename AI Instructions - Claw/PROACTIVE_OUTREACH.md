@@ -14,7 +14,7 @@ SOUL.md and MEMORY.md already loaded as bootstrap.
 
 ## Scheduler integration
 
-### OpenClaw / ZeroClaw / Agent-0
+### OpenClaw / Claw / Agent-0
 
 These agents have **native memory** — conversation history and state across sessions. Use it.
 - Native memory handles conversation context, preferences, relationship history automatically.
@@ -33,7 +33,7 @@ If using external cron:
 ```
 `random_ping` fires every 3h but only actually sends ~30% of the time.
 
-### ZeroClaw heartbeat vs cron
+### Claw heartbeat vs cron
 
 **Heartbeat (recommended):** Runs every 30min during active hours. Checks all triggers in priority order, fires first match.
 ```json
