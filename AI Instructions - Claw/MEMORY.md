@@ -1,5 +1,12 @@
-<!-- Bootstrap: Every session (read + write). Archival: every 30 days. Keep under 150 lines. -->
-<!-- Reminder: SOUL.md and AGENTS.md already loaded. If user is talking: read STRATEGIES.md. -->
+---
+bootstrap: true
+read: every session (auto-loaded by ZeroClaw)
+write: end of every session
+archival: every 30 days — move completed/old entries to vector DB, then delete from this file
+size: keep this file under 150 lines. If approaching limit, run archival early.
+---
+
+<!-- AGENT REMINDER: SOUL.md and AGENTS.md are already loaded. Check current mode below. If the user is talking to you: read_file("AI Instructions - ZeroClaw/STRATEGIES.md"). -->
 
 # Memory
 
@@ -12,6 +19,8 @@
 
 ## Goals (top 3 active)
 
+- [Goal]: [Status — active / stalled / complete] — last updated [date]
+- [Goal]: [Status — active / stalled / complete] — last updated [date]
 - [Goal]: [Status — active / stalled / complete] — last updated [date]
 
 ---
@@ -36,9 +45,13 @@
 
 - [Trigger]: [When it appears, what follows]
 
+---
+
 ## Working style notes (max 10)
 
 - [Short observation — e.g. "energising task first builds momentum"]
+
+---
 
 ## Key people (max 10)
 
@@ -70,13 +83,17 @@
 
 - [Short description]: [How it's affecting goals/mood right now] — since [date]
 
+---
+
 ## Recurring patterns (max 10 active — archive resolved)
 
 | Pattern | First seen | Last seen | Frequency | Status | Notes |
 |---|---|---|---|---|---|
 | [name] | [date] | [date] | [how often] | active | [brief observation] |
 
-## Monthly summaries (index only — full summaries in vector DB)
+---
+
+## Monthly summaries (index only — full summaries are in vector DB)
 
 | Month | Embedded | Commitments kept/made | Top strategy | Focus |
 |---|---|---|---|---|
