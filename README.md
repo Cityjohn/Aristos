@@ -1,6 +1,6 @@
 # 🧭 Aristos — A Personal happiness Framework
 
-*A journaling and goal-tracking framework for [OpenClaw](https://github.com/openclaw) / [ZeroClaw](https://github.com/zeroclaw) and other Claw-type agents, and [n8n](https://n8n.io) automations. A method for AI agents to support the goals of their users. Pairs with [Kasmidian](https://github.com/Cityjohn/Kasmidian) for 24/7 agent access to your journal / obsidian vault.*
+*A journaling and goal-tracking framework for [OpenClaw](https://github.com/openclaw) / [Claw](https://github.com/claw) and other Claw-type agents, and [n8n](https://n8n.io) automations. A method for AI agents to support the goals of their users. Pairs with [Kasmidian](https://github.com/Cityjohn/Kasmidian) for 24/7 agent access to your journal / obsidian vault.*
 
 ---
 
@@ -39,7 +39,7 @@ This isn't a productivity dashboard. It's a companion that grows with you.
   - [Nodes](#️-nodes)
   - [Example workflow: file loading logic](#️-example-workflow-file-loading-logic)
   - [Vector DB integration](#️-vector-db-integration)
-- [🐾 Setup: OpenClaw / ZeroClaw](#-setup-openclaw--zeroclaw)
+- [🐾 Setup: OpenClaw / Claw](#-setup-openclaw--claw)
   - [How bootstrap files work](#-how-bootstrap-files-work)
   - [Native memory + MEMORY.md](#-native-memory--memorymd)
   - [Configuration](#️-configuration)
@@ -142,7 +142,7 @@ Understands that resistance isn't laziness. Knows when to push and when to just 
 2. 📂 Keep the `Journal/` folder (shared across all platforms)
 3. 🔧 Pick **ONE** of the `AI Instructions` folders:
   - `AI Instructions - n8n/` — for n8n workflow automation
-  - `AI Instructions - ZeroClaw/` — for OpenClaw/ZeroClaw/Agent-0
+  - `AI Instructions - Claw/` — for OpenClaw/Claw/Agent-0
 4. 🗑️ Delete the other one
 5. 🖥️ Make the vault accessible to your agent — if you use Obsidian, [Kasmidian](https://github.com/Cityjohn/Kasmidian) + Obsidian Sync is the recommended setup
 6. 📖 Follow the platform-specific setup below
@@ -165,7 +165,7 @@ Understands that resistance isn't laziness. Knows when to push and when to just 
     📄 2025.md                       — example yearly plan
 
 📂 AI Instructions - n8n/           ← pick one
-📂 AI Instructions - ZeroClaw/      ← pick one
+📂 AI Instructions - Claw/      ← pick one
 ```
 
 ---
@@ -240,7 +240,7 @@ Two minutes of structured writing per day gives the agent everything it needs to
 
 None of this works unless the agent has **live file access to the vault**. The journal entries only become coaching data if the agent can actually open them.
 
-This means the vault — the folder containing your `Journal/` and `AI Instructions/` files — needs to live somewhere the agent can reach via the filesystem. For n8n that means a mounted path on the same host. For ZeroClaw that means a Docker volume.
+This means the vault — the folder containing your `Journal/` and `AI Instructions/` files — needs to live somewhere the agent can reach via the filesystem. For n8n that means a mounted path on the same host. For Claw that means a Docker volume.
 
 **If you use Obsidian to write your journal** (recommended), the simplest way to guarantee 24/7 agent access is to keep a headless Obsidian instance running on your server alongside the agent — so the vault is always present on disk, always up to date, and always readable.
 
@@ -277,7 +277,7 @@ This means the vault — the folder containing your `Journal/` and `AI Instructi
 | `JOURNAL_READING.md`    | Tool-read (coaching sessions) | How to parse journal entries                    |
 
 
-🐾 **ZeroClaw** (9 files)
+🐾 **Claw** (9 files)
 
 
 | File                    | Delivery                  | Purpose                                         |
@@ -295,7 +295,7 @@ This means the vault — the folder containing your `Journal/` and `AI Instructi
 
 ### 🔄 How file loading works
 
-> **ZeroClaw:** Each file's YAML frontmatter tells ZeroClaw how to handle it:
+> **Claw:** Each file's YAML frontmatter tells Claw how to handle it:
 
 
 | Frontmatter           | Meaning                                                                                      | Files                                                                                               |
@@ -329,7 +329,7 @@ The system is designed to minimize token cost by only loading what's needed.
 | `JOURNAL_READING.md`    | ~110  | ~800        | Coaching sessions                            |
 
 
-📊 File sizes (ZeroClaw)
+📊 File sizes (Claw)
 
 
 | File                    | Lines | Est. tokens | Loaded when                       |
@@ -348,7 +348,7 @@ The system is designed to minimize token cost by only loading what's needed.
 ### ⚡ What gets loaded when
 
 
-| Invocation type       | Est. tokens (n8n)               | Est. tokens (ZeroClaw)        |
+| Invocation type       | Est. tokens (n8n)               | Est. tokens (Claw)        |
 | --------------------- | ------------------------------- | ----------------------------- |
 | Every call (minimum)  | ~1,900 (SOUL + AGENTS + MEMORY) | ~1,600 (bootstrap)            |
 | Outreach trigger      | ~4,200                          | ~3,300 (bootstrap + outreach) |
@@ -520,14 +520,14 @@ Use a Qdrant, Pinecone, or Supabase vector store node:
 
 ---
 
-## 🐾 Setup: OpenClaw / ZeroClaw
+## 🐾 Setup: OpenClaw / Claw
 
-Use the `AI Instructions - ZeroClaw/` folder. Delete the other one.
+Use the `AI Instructions - Claw/` folder. Delete the other one.
 
 > **How it works in 30 seconds:**
 >
-> 1. Mount your vault into the ZeroClaw Docker container
-> 2. ZeroClaw auto-loads 4 bootstrap files on every session: `SOUL.md` (personality), `AGENTS.md` (rules + adaptive mode), `MEMORY.md` (live state), and `HEARTBEAT.md` (outreach checklist)
+> 1. Mount your vault into the Claw Docker container
+> 2. Claw auto-loads 4 bootstrap files on every session: `SOUL.md` (personality), `AGENTS.md` (rules + adaptive mode), `MEMORY.md` (live state), and `HEARTBEAT.md` (outreach checklist)
 > 3. The agent loads other files (`STRATEGIES.md`, `JOURNAL_READING.md`, `PREDICTIVE.md`) on demand via `read_file` — the checklist in `AGENTS.md` tells it when
 > 4. Set up cron jobs for time-specific triggers (morning check-in, evening review, weekly reflection)
 > 5. The heartbeat handles everything else — casual pings, commitment follow-ups, win celebrations
@@ -536,7 +536,7 @@ Use the `AI Instructions - ZeroClaw/` folder. Delete the other one.
 
 ### ⚡ How bootstrap files work
 
-ZeroClaw auto-loads files from the workspace into every session. The four bootstrap files (`SOUL.md`, `AGENTS.md`, `MEMORY.md`, `HEARTBEAT.md`) are injected automatically — the agent never has to decide to read them.
+Claw auto-loads files from the workspace into every session. The four bootstrap files (`SOUL.md`, `AGENTS.md`, `MEMORY.md`, `HEARTBEAT.md`) are injected automatically — the agent never has to decide to read them.
 
 Other files (`STRATEGIES.md`, `PREDICTIVE.md`, etc.) are read on-demand via the `read_file` tool. The loading checklist in `AGENTS.md` tells the agent when to read each one.
 
@@ -554,11 +554,11 @@ Claw-type agents have **native memory** — persistent conversation history acro
 # docker-compose.yml
 services:
   agent:
-    image: openclaw/zeroclaw:latest
+    image: openclaw/claw:latest
     volumes:
       - /path/to/kasmidian/vault:/vault
     environment:
-      - WORKSPACE=/vault/AI Instructions - ZeroClaw
+      - WORKSPACE=/vault/AI Instructions - Claw
 ```
 
 **2. 💓 Heartbeat (periodic outreach)**
@@ -620,7 +620,7 @@ Claw-type agents can also reach out based on their own judgment during vault sca
 
 **Why split into platform folders?**
 
-Each platform loads files differently. n8n pre-loads via workflow nodes, ZeroClaw auto-injects bootstrap files. Platform-specific folders let each version use the right file names, loading mechanisms, and scheduling patterns without compromises.
+Each platform loads files differently. n8n pre-loads via workflow nodes, Claw auto-injects bootstrap files. Platform-specific folders let each version use the right file names, loading mechanisms, and scheduling patterns without compromises.
 
 **Why merge adaptive mode into the system prompt?**
 
