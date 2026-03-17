@@ -527,16 +527,16 @@ Use the `AI Instructions - Claw/` folder. Delete the other one.
 > **How it works in 30 seconds:**
 >
 > 1. Mount your vault into the Claw Docker container
-> 2. Claw auto-loads 4 bootstrap files on every session: `SOUL.md` (personality), `AGENTS.md` (rules + adaptive mode), `MEMORY.md` (live state), and `HEARTBEAT.md` (lightweight checklist)
+> 2. Claw auto-loads 3 bootstrap files on every session: `SOUL.md` (personality), `AGENTS.md` (rules + adaptive mode), and `MEMORY.md` (live state)
 > 3. The agent loads other files (`STRATEGIES.md`, `JOURNAL_READING.md`, `PREDICTIVE.md`) on demand via `read_file` — the checklist in `AGENTS.md` tells it when
-> 4. Set up cron jobs for all proactive outreach (morning check-in, evening review, weekly reflection, etc.)
-> 5. The lightweight heartbeat only nudge-checks journal completion — crons handle the rest
+> 4. Set up cron jobs: 3 coaching check-ins, 3 random engagement (probabilistic), 1 nightly maintenance
+> 5. A shared `session-state.json` file coordinates between crons — no native heartbeat needed
 >
 > No workflow builder needed. Drop the files in, create the cron jobs, and the agent runs itself.
 
 ### ⚡ How bootstrap files work
 
-Claw auto-loads files from the workspace into every session. The four bootstrap files (`SOUL.md`, `AGENTS.md`, `MEMORY.md`, `HEARTBEAT.md`) are injected automatically — the agent never has to decide to read them.
+Claw auto-loads files from the workspace into every session. The three bootstrap files (`SOUL.md`, `AGENTS.md`, `MEMORY.md`) are injected automatically — the agent never has to decide to read them.
 
 Other files (`STRATEGIES.md`, `PREDICTIVE.md`, etc.) are read on-demand via the `read_file` tool. The loading checklist in `AGENTS.md` tells the agent when to read each one.
 
@@ -561,77 +561,60 @@ services:
       - WORKSPACE=/vault/AI Instructions - Claw
 ```
 
-**2. ⏰ Cron-based outreach (replaces heavy heartbeat)**
+**2. ⏰ Cron-based outreach (replaces native heartbeat)**
 
-All proactive outreach uses isolated cron jobs. The heartbeat (`HEARTBEAT.md`) is now lightweight — it only checks for missing daily notes, incomplete reviews, and due commitments. Crons handle the structured outreach (morning check-ins, evening reviews, weekly reflections).
+All proactive outreach uses isolated cron jobs. The native heartbeat is **disabled** — crons handle everything. This prevents heartbeat interrupts from blocking your main conversation.
 
 ### Cron architecture
 
-Each cron job runs in its own **isolated session** with a self-contained prompt:
+| Component | Count | Schedule | Purpose |
+|---|---|---|---|
+| **Coaching crons** | 3 | 8 AM, 12:35 PM, 6 PM | Goal-focused check-ins, strategy rotation |
+| **Random engagement** | 3 | ~11:15 AM, ~3 PM, ~8:30 PM | Casual, philosophical, or funny messages |
+| **Nightly maintenance** | 1 | 2 AM | Archives, mood rollup, resets daily state |
+| **Email check** | 1 | Every 30 min | Optional, can use separate bot account |
 
-- **Isolated sessions** — cron runs don't pollute the main chat history
-- **Self-contained prompts** — each job tells the agent to check context (MEMORY.md, daily notes) before messaging
-- **Smart deduplication** — prompts include logic to skip if already active today (NO_REPLY)
-- **Zero output tokens when idle** — the lightweight heartbeat replies NO_REPLY most of the time
+### How it works
 
-### Cron jobs to create
+- **Isolated sessions** — each cron runs independently, never blocks the main chat
+- **session-state.json** — shared state file tracks `lastActivity`, coaching sent/responses, random count. All crons read this.
+- **Activity awareness** — random crons check `lastActivity` timestamp; skip if user was active in last 90 minutes
+- **Adaptive probability** — random engagement base chance is 15%, but increases by 20% per unanswered coaching message (up to 90%)
+- **Self-cleaning** — nightly maintenance archives old data, rolls up mood/energy, enforces memory limits
 
-```bash
-# Morning check-in — 8 AM daily
-openclaw cron add --name "morning-checkin" --cron "0 8 * * *" --tz "Europe/Amsterdam" \
-  --session isolated --timeout 30 \
-  --message "You are doing a morning check-in. Before messaging: (1) Check memory/YYYY-MM-DD.md (today + yesterday) and MEMORY.md for recent context, mood, active commitments. (2) Check if you already reached out today. Choose ONE approach: If active commitments from yesterday, reference one briefly. If struggling recently, keep it extra light. If momentum, celebrate it. If no context at all, one casual sentence. NEVER ask the same question twice. ONE sentence max. Casual, warm." \
-  --announce --channel telegram
+### Two vibes
 
-# Noon follow-up — 12:35 PM daily
-openclaw cron add --name "noon-followup" --cron "35 12 * * *" --tz "Europe/Amsterdam" \
-  --session isolated --timeout 30 \
-  --message "You are doing a midday follow-up. Before messaging: (1) Check today's memory/YYYY-MM-DD.md and recent context. (2) Check if user has replied to or engaged with any outreach today. Rules: If already active today, reply NO_REPLY. If morning went out but no reply, different angle — observation, memory reference, 2-minute rule suggestion, or permission to rest. ONE sentence max. Never repeat the morning message." \
-  --announce --channel telegram
+The user typically has **two sides**: a playful/joking side AND a serious philosophical side. Outreach should reflect both:
+- **Playful:** Absurd observations, weird facts, humor
+- **Philosophical:** Markets, innovation, human psychology, societal critique, evolutionary behavior, deep abstract concepts
 
-# Evening review — 9 PM daily
-openclaw cron add --name "evening-review" --cron "0 21 * * *" --tz "Europe/Amsterdam" \
-  --session isolated --timeout 30 \
-  --message "You are doing an evening review. Before messaging: (1) Read today's memory/YYYY-MM-DD.md and MEMORY.md. (2) Check current mode. Rules: If daily note exists with end-of-day review filled in, reply NO_REPLY. If no daily note exists: offer to write one from quick chat. If daily note exists but review blank: ask for highlights. If mode is struggling/returning: keep it extra light, offer to write it for them. ONE sentence max. Casual, warm." \
-  --announce --channel telegram
+### Setup
 
-# Midweek check — Wednesday 10 AM
-openclaw cron add --name "midweek-check" --cron "0 10 * * 3" --tz "Europe/Amsterdam" \
-  --session isolated --timeout 30 \
-  --message "You are doing a midweek check on Wednesday. Before messaging: (1) Check memory/YYYY-MM-DD.md files for this week and MEMORY.md. (2) Check current mode. Rules: If things going well: celebrate with specific evidence. If fewer than 2 daily notes this week: prompt with one thing to focus on before Friday. If mode is struggling/returning: keep it light, no pressure. ONE sentence max." \
-  --announce --channel telegram
+The full cron commands, prompt templates, and configuration details are in `AI Instructions - Claw/AGENTS.md` under "⏰ Cron-Based Outreach System".
 
-# Weekly reflection — Sunday 6 PM
-openclaw cron add --name "weekly-reflection" --cron "0 18 * * 0" --tz "Europe/Amsterdam" \
-  --session isolated --timeout 30 \
-  --message "You are doing a weekly reflection on Sunday evening. Before messaging: (1) Check memory/YYYY-MM-DD.md files for this week, MEMORY.md. (2) Check current mode. Rules: If weekly reflection already exists for this week, reply NO_REPLY. If struggling/returning: 'Week's done. Even just a quick sentence — how'd it go?' If baseline/momentum: ask how the week went, what worked, what didn't. ONE sentence max." \
-  --announce --channel telegram
+Key things to configure:
+1. Replace `YOUR_TIMEZONE` with your timezone (e.g., `Europe/Amsterdam`, `America/New_York`)
+2. Replace `YOUR_CHAT_ID` with your Telegram chat ID (numeric)
+3. Optionally set up a second Telegram bot for the email check (keeps logs out of main chat)
+4. Adjust cron times to your schedule
 
-# Lightweight heartbeat — 9 AM, 12 PM, 3 PM, 6 PM, 9 PM
-openclaw cron add --name "lightweight-heartbeat" --cron "0 9,12,15,18,21 * * *" --tz "Europe/Amsterdam" \
-  --session isolated --timeout 30 \
-  --message "You are doing a lightweight heartbeat. Be fast. Check: (1) current mode in MEMORY.md, (2) today's memory/YYYY-MM-DD.md exists and is complete, (3) active commitments with follow-up dates today/yesterday. ONLY output if: missing daily note after 10 AM, incomplete daily note after 6 PM, commitment due, or 8+ hours silent during active hours. If NONE apply → reply NO_REPLY. When outputting: ONE sentence max." \
-  --announce --channel telegram
+### 🗂️ session-state.json
 
-# Email check (optional) — every 60 minutes, delivered to separate bot
-openclaw cron add --name "email-check" --every 3600000 \
-  --session isolated --timeout 60 \
-  --message "Check for unread emails. Summarize important ones for the user. If no new emails, reply NO_REPLY." \
-  --announce --channel telegram --account heartbeat
+Create this file in your workspace root — it's the shared brain for all cron jobs:
+
+```json
+{
+  "date": "YYYY-MM-DD",
+  "lastActivity": null,
+  "coachingSent": [],
+  "coachingResponses": [],
+  "randomSent": 0
+}
 ```
 
-### Important notes
-- Use `--tz` to set your timezone (e.g., `Europe/Amsterdam`, `America/New_York`)
-- All outreach crons use `--session isolated` to avoid blocking the main chat
-- The `lightweight-heartbeat` replies NO_REPLY most of the time — zero output tokens when nothing needs attention
-- The email check can use a separate Telegram bot account to keep noise out of main DMs
-- Adjust `--cron` expressions to your timezone and preferred times
+The nightly maintenance resets this file each night. Don't worry about it growing — it's intentionally tiny.
 
-**3. 🤖 Self-initiated outreach**
-
-Claw-type agents can also reach out based on their own judgment during vault scans. If the agent notices a pattern, a win, or an anomaly, it can reach out without waiting for a scheduled trigger.
-
-**4. 🛠️ Tool calls**
+### 🛠️ Tool calls
 
 
 | Tool            | Purpose                            | Maps to                                  |

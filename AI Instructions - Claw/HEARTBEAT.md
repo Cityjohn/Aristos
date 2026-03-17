@@ -1,26 +1,32 @@
 ---
 bootstrap: true
-purpose: Lightweight periodic check. Reads journal and memory state, only outputs when something needs attention.
+purpose: Deprecated — heartbeat-based outreach replaced by cron system.
 ---
 
-# Lightweight Heartbeat
+# HEARTBEAT.md — Deprecated
 
-Run through these checks fast. If nothing needs attention, reply ONLY: HEARTBEAT_OK
+**This file is no longer used.** Native heartbeat-based outreach has been replaced by the cron-based system described in `AGENTS.md`.
 
-## Checks
-1. Read `MEMORY.md` — check current mode, active commitments, mood/energy trends
-2. Check if today's daily note exists: `Journal/Day to Day/YYYY-MM-DD.md`
-3. Check MEMORY.md for active commitments with follow-up dates today/yesterday
+## Why?
 
-## Only output if ONE of these is true:
-- **Missing daily note:** No daily note exists for today AND it's after 10 AM → one gentle nudge. Offer to write it from quick chat if mode is struggling/returning.
-- **Incomplete daily note:** Daily note exists but is missing mood/energy or end-of-day review (after 6 PM) → nudge to complete it.
-- **Commitment due:** Active commitment with follow-up date today/yesterday, status still open → one brief check-in.
-- **Silent too long:** It's been 8+ hours during active hours (8 AM - 10 PM) since last interaction → one social ping, nothing task-related.
+Native heartbeats fire into the **main session**, blocking user conversations. Cron jobs run in **isolated sessions** and never interfere with chatting.
 
-## Rules
-- ONE sentence max when outputting. Casual, warm.
-- Adapt to current mode (returning = no pressure, just offer to help).
-- Never repeat what scheduled cron jobs already cover.
-- Never waste tokens explaining what you checked. Either reach out or HEARTBEAT_OK.
-- If nothing matches, reply HEARTBEAT_OK. Always.
+## Migration
+
+If you're setting up Aristos for the first time, ignore this file. Follow the cron setup in `AGENTS.md` instead.
+
+If you're migrating from the old heartbeat system:
+1. Set up the coaching crons, random engagement crons, and nightly maintenance (see `AGENTS.md`)
+2. Disable or remove any existing heartbeat configuration
+3. Delete this file from your workspace (it's only here for backward compatibility)
+
+## What the heartbeat used to do (now handled by crons)
+
+| Old heartbeat task | Now handled by |
+|---|---|
+| Morning check-in | `morning-checkin` cron (8 AM) |
+| Midday nudge | `noon-followup` cron (12:35 PM) |
+| Evening review | `evening-coaching` cron (6 PM) |
+| Random social pings | `random-engagement-*` crons (3/day, probabilistic) |
+| Journal completion check | `nightly-maintenance` cron (2 AM) |
+| Commitment follow-up | Coaching crons (built into prompts) |

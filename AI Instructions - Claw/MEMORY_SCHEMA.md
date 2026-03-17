@@ -5,7 +5,7 @@ purpose: Defines memory systems, size limits, archival rules, and embedding logi
 
 # Memory Schema
 
-You have two memory systems. This file defines what goes where, size limits, archival rules, and the success-tracking loop.
+You have multiple memory systems. This file defines what goes where, size limits, archival rules, and the success-tracking loop.
 
 ---
 
@@ -80,7 +80,50 @@ Embed the monthly summary (format below) and add a row to the monthly summaries 
 
 ---
 
-## System 2: Vector database
+## System 2: session-state.json (cron coordination)
+
+**What it is:** A tiny JSON file shared across all cron jobs for cross-session awareness. Prevents crons from interrupting active conversations and enables adaptive engagement.
+
+**Location:** `memory/session-state.json` in workspace root.
+
+### Structure
+
+```json
+{
+  "date": "2026-03-17",
+  "lastActivity": "2026-03-17T14:00:00+01:00",
+  "coachingSent": ["08:01", "12:35"],
+  "coachingResponses": ["08:15"],
+  "randomSent": 1
+}
+```
+
+| Field | Type | Purpose | Updated by |
+|---|---|---|---|
+| `date` | string (YYYY-MM-DD) | Current day | Nightly maintenance |
+| `lastActivity` | ISO timestamp or null | Last user interaction | Main session (session-activity tracking) |
+| `coachingSent` | array of strings | Timestamps of coaching messages today | Coaching crons |
+| `coachingResponses` | array of strings | Timestamps of user responses to coaching | Coaching crons |
+| `randomSent` | integer | Random engagement count today | Random crons |
+
+### Rules
+
+- **Read by all crons** before deciding whether to send a message
+- **Written by crons** after sending messages or detecting responses
+- **Reset nightly** by the maintenance cron (fresh state each day)
+- **`lastActivity` updated by main session** — agent sets this at session start via the session-activity tracking protocol in AGENTS.md
+- **Size is always small** — it resets daily, never grows beyond ~200 bytes
+
+### How random crons use it
+
+1. Check `lastActivity` — if < 90 minutes ago, reply NO_REPLY (don't interrupt)
+2. Check `randomSent` — if >= 3, reply NO_REPLY (daily limit)
+3. Calculate probability using `coachingSent` and `coachingResponses` arrays
+4. If sending, increment `randomSent` and update `lastActivity`
+
+---
+
+## System 3: Vector database
 
 **What it is:** The long-term memory. Semantic search index for retrieving relevant history when the current situation resembles something from the past.
 

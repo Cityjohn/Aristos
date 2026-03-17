@@ -1,98 +1,71 @@
 ---
 bootstrap: true
-read: every session (auto-loaded by OpenClaw)
-write: end of every session
-archival: every 30 days — move completed/old entries to archive, then delete from this file
-size: keep this file under 150 lines. If approaching limit, run archival early.
+purpose: Long-term memory, goals, commitments, patterns, and coaching history. Read and update every session.
 ---
 
-# Memory
+# MEMORY.md — Long-Term Memory
 
 ## Current mode
-
-- Mode: [returning / struggling / baseline / momentum] — since [date]
-- Previous mode: [mode] — [date range]
+- Mode: returning — since [DATE]
+- Previous mode: none — first setup
 
 ---
 
 ## Goals (top 3 active)
-
-- [Goal]: [Status — active / stalled / complete] — last updated [date]
-- [Goal]: [Status — active / stalled / complete] — last updated [date]
-- [Goal]: [Status — active / stalled / complete] — last updated [date]
-
----
+1. [Goal 1]
+2. [Goal 2]
+3. [Goal 3]
 
 ## Active commitments (max 15 open — archive after 30 days)
 
 | Commitment | Committed on | Follow up by | Status |
 |---|---|---|---|
-| [What they said they'd do] | [date] | [date] | open |
-
----
+| _none yet_ | | | |
 
 ## Strategy log (max 20 — archive oldest after 30 days)
 
 | Date | Pattern | Strategy tried | Result | Next move |
 |---|---|---|---|---|
-| [date] | [pattern name] | [strategy name] | [worked / partial / no effect] | [try next or repeat] |
-
----
+| _none yet_ | | | | |
 
 ## Known distraction triggers (max 10)
-
-- [Trigger]: [When it appears, what follows]
-
----
+- _To be identified_
 
 ## Working style notes (max 10)
-
-- [Short observation — e.g. "energising task first builds momentum"]
-
----
+- _To be identified_
 
 ## Key people (max 10)
+- _To be identified_
 
-- [Name]: [Relevance to active goals]
-
----
-
-## Mood/energy — daily (rolling 7 days — delete older)
+## Mood/energy — daily (rolling 7 days)
 
 | Date | Mood | Energy | Note |
 |---|---|---|---|
-| [date] | [x]/10 | [x]/10 | [short context] |
+| _none yet_ | | | |
 
-## Mood/energy — weekly averages (rolling 12 weeks — delete older)
+## Mood/energy — weekly averages (rolling 12 weeks)
 
 | Week | Mood avg | Energy avg | Note |
 |---|---|---|---|
-| [YYYY-Www] | [x]/10 | [x]/10 | [one-line trend note] |
+| _none yet_ | | | |
 
 ## Mood/energy — monthly averages (never delete)
 
 | Month | Mood avg | Energy avg | Trend | Note |
 |---|---|---|---|---|
-| [YYYY-MM] | [x]/10 | [x]/10 | [up/down/stable] | [what drove it] |
-
----
+| _none yet_ | | | | |
 
 ## Relationship & life context (max 5 active — archive when stale)
-
-- [Short description]: [How it's affecting goals/mood right now] — since [date]
-
----
+- _To be identified_
 
 ## Recurring patterns (max 10 active — archive resolved)
 
 | Pattern | First seen | Last seen | Frequency | Status | Notes |
 |---|---|---|---|---|---|
-| [name] | [date] | [date] | [how often] | active | [brief observation] |
+| _none yet_ | | | | | |
 
----
-
-## Monthly summaries (index only — full summaries are in archive)
+## Monthly summaries (index — full summaries in memory/archive/)
 
 | Month | Archived | Commitments kept/made | Top strategy | Focus |
 |---|---|---|---|---|
-| [Month Year] | [yes/no] | [n/n] | [name] | [one phrase] |
+| _none yet_ | | | | |
