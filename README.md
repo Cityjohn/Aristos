@@ -166,6 +166,19 @@ Understands that resistance isn't laziness. Knows when to push and when to just 
 
 📂 AI Instructions - n8n/           ← pick one
 📂 AI Instructions - Claw/      ← pick one
+  📄 AGENTS.md
+  📄 SOUL.md
+  📄 IDENTITY.md              ← fill in your agent's identity
+  📄 USER.md                  ← fill in your human's context
+  📄 TOOLS.md                 ← fill in local setup, journal paths
+  📄 MEMORY.md
+  📄 HEARTBEAT.md
+  📄 STRATEGIES.md
+  📄 PREDICTIVE.md
+  📄 PROACTIVE_OUTREACH.md
+  📄 MEMORY_SCHEMA.md
+  📄 JOURNAL_READING.md
+  📄 session-state.json       ← auto-created at runtime
 ```
 
 ---
@@ -277,20 +290,24 @@ This means the vault — the folder containing your `Journal/` and `AI Instructi
 | `JOURNAL_READING.md`    | Tool-read (coaching sessions) | How to parse journal entries                    |
 
 
-🐾 **Claw** (9 files)
+🐾 **Claw** (13 files)
 
 
 | File                    | Delivery                  | Purpose                                         |
 | ----------------------- | ------------------------- | ----------------------------------------------- |
-| `SOUL.md`               | Bootstrap (auto-loaded)   | Personality, tone, emotional awareness          |
-| `AGENTS.md`             | Bootstrap (auto-loaded)   | Core rules, adaptive mode, loading checklist    |
-| `MEMORY.md`             | Bootstrap (auto-loaded)   | Live state — goals, commitments, mood, patterns |
-| `HEARTBEAT.md`          | Bootstrap (auto-loaded)   | Lightweight heartbeat checklist             |
+| `SOUL.md`               | Bootstrap (auto-loaded)   | Personality, voice, communication style         |
+| `AGENTS.md`             | Bootstrap (auto-loaded)   | Operating manual, rules, file loading           |
+| `IDENTITY.md`           | Bootstrap (auto-loaded)   | Agent identity — name, emoji, purpose           |
+| `USER.md`               | Bootstrap (auto-loaded)   | Human context — name, timezone, priorities      |
+| `TOOLS.md`              | Bootstrap (auto-loaded)   | Local setup — journal paths, cron, devices      |
+| `MEMORY.md`             | Bootstrap (auto-loaded)   | Live state — mode, goals, commitments, patterns |
+| `HEARTBEAT.md`          | Bootstrap (auto-loaded)   | Heartbeat check logic                           |
 | `STRATEGIES.md`         | Tool-read via `read_file` | Strategy menu by situation                      |
 | `PREDICTIVE.md`         | Tool-read via `read_file` | Pattern prediction from historical data         |
 | `PROACTIVE_OUTREACH.md` | Tool-read via `read_file` | When/how to reach out unprompted                |
 | `MEMORY_SCHEMA.md`      | Tool-read via `read_file` | Memory systems, archival rules                  |
 | `JOURNAL_READING.md`    | Tool-read via `read_file` | How to parse journal entries                    |
+| `session-state.json`    | Auto-created at runtime   | Tracks activity, coaching state, random count   |
 
 
 ### 🔄 How file loading works
@@ -300,7 +317,7 @@ This means the vault — the folder containing your `Journal/` and `AI Instructi
 
 | Frontmatter           | Meaning                                                                                      | Files                                                                                               |
 | --------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `bootstrap: true`     | ⚡ Auto-injected into every session — always in context, agent never has to decide to load it | `SOUL.md`, `AGENTS.md`, `MEMORY.md`, `HEARTBEAT.md`                                                 |
+| `bootstrap: true`     | ⚡ Auto-injected into every session — always in context, agent never has to decide to load it | `SOUL.md`, `AGENTS.md`, `IDENTITY.md`, `USER.md`, `TOOLS.md`, `MEMORY.md`, `HEARTBEAT.md` |
 | `delivery: tool-read` | 📖 Loaded on demand — the agent reads it via `read_file` only when needed, saving tokens     | `STRATEGIES.md`, `PREDICTIVE.md`, `PROACTIVE_OUTREACH.md`, `MEMORY_SCHEMA.md`, `JOURNAL_READING.md` |
 
 
