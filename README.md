@@ -161,6 +161,7 @@ Understands that resistance isn't laziness. Knows when to push and when to just 
   📄 PROACTIVE_OUTREACH.md    - outreach rules (loaded on demand)
   📄 MEMORY_SCHEMA.md         - archival rules, memory systems
   📄 JOURNAL_READING.md       - how to parse journal entries
+  📄 CRON.md                  - cron job setup, prompts, and probability logic
   📄 session-state.json       ← auto-created at runtime
 ```
 
@@ -248,6 +249,7 @@ Two minutes of structured writing per day gives the agent everything it needs to
 | `PROACTIVE_OUTREACH.md` | Tool-read via `read_file` | When/how to reach out unprompted                |
 | `MEMORY_SCHEMA.md`      | Tool-read via `read_file` | Memory systems, archival rules                  |
 | `JOURNAL_READING.md`    | Tool-read via `read_file` | How to parse journal entries                    |
+| `CRON.md`               | Tool-read via `read_file` | Cron job setup, prompts, probability logic      |
 | `session-state.json`    | Auto-created at runtime   | Tracks activity, coaching state, random count   |
 
 ### Setup files (fill in these)
@@ -315,6 +317,8 @@ The system is designed to minimize token cost by only loading what's needed.
 
 All proactive outreach uses **isolated cron jobs** - not the native heartbeat. This prevents heartbeat interrupts from blocking your main conversation.
 
+Full job definitions, prompts, probability logic, and setup instructions are in `CRON.md`. This section covers the high-level architecture.
+
 ### Architecture
 
 ```
@@ -327,7 +331,11 @@ All proactive outreach uses **isolated cron jobs** - not the native heartbeat. T
 │  🎲 3:00 PM   random engagement (probabilistic)  │
 │  🌙 6:00 PM   evening coaching wrap-up            │
 │  🎲 8:30 PM   random engagement (probabilistic)  │
+│  📋 9:00 PM   evening review (daily note check)  │
+│  📅 Wed 10 AM  midweek check                     │
+│  📝 Sun 6 PM   weekly reflection                 │
 │  🔧 2:00 AM   nightly maintenance                │
+│  📧 every 30m  email check                       │
 │                                                  │
 │  Each job reads session-state.json for context   │
 │  Each job writes back to session-state.json      │
@@ -339,7 +347,7 @@ All proactive outreach uses **isolated cron jobs** - not the native heartbeat. T
 - **Isolated sessions** - each cron runs independently, never blocks the main chat
 - **session-state.json** - shared state file tracks `lastActivity`, coaching sent/responses, random count
 - **Activity awareness** - random crons check `lastActivity` timestamp; skip if user was active in last 90 minutes
-- **Adaptive probability** - random engagement base chance is 15%, increases by 20% per unanswered coaching message (up to 90%)
+- **Adaptive probability** - random engagement starts at 15% and climbs based on unanswered coaching messages and silence duration. See `CRON.md` for the full formula and why it works.
 - **Self-cleaning** - nightly maintenance archives old data, rolls up mood/energy, enforces memory limits
 
 ### Two vibes
@@ -350,8 +358,8 @@ The user typically has **two sides**: a playful/joking side AND a serious philos
 
 ### Setup
 
-1. Replace `YOUR_TIMEZONE` in TOOLS.md with your timezone (e.g., `Europe/Amsterdam`, `America/New_York`)
-2. Set up cron jobs via OpenClaw cron or system crontab
+1. Replace placeholders in `CRON.md` (timezone, chat ID, agent name, user name)
+2. Copy the job JSON format from `CRON.md` and create each job
 3. Create `session-state.json` in your workspace root:
 
 ```json
