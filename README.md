@@ -1,6 +1,6 @@
-# 🧭 Aristos — A Personal happiness Framework
+# 🧭 Aristos for OpenClaw Agents
 
-*A journaling and goal-tracking framework for [OpenClaw](https://github.com/openclaw) / [Claw](https://github.com/claw) and other Claw-type agents, and [n8n](https://n8n.io) automations. A method for AI agents to support the goals of their users. Pairs with [Kasmidian](https://github.com/Cityjohn/Kasmidian) for 24/7 agent access to your journal / obsidian vault.*
+*A journaling and goal-tracking framework for [OpenClaw](https://github.com/openclaw) agents. A method for AI agents to support the goals of their users. Pairs with [Kasmidian](https://github.com/Cityjohn/Kasmidian) for 24/7 agent access to your journal / Obsidian vault.*
 
 ---
 
@@ -14,8 +14,6 @@ Grounded in structured journaling templates and adaptive coaching strategies fro
 
 This isn't a productivity dashboard. It's a companion that grows with you.
 
-
-
 ---
 
 ## Contents
@@ -25,24 +23,11 @@ This isn't a productivity dashboard. It's a companion that grows with you.
 - [🚀 Quick start](#-quick-start)
 - [📁 Folder structure](#-folder-structure)
 - [📓 The Journal — 2 minutes a day](#-the-journal--2-minutes-a-day)
-  - [Daily Focus Template](#-daily-focus-template---2-minutes)
-  - [Weekly Reflection Template](#-weekly-reflection-template---10-minutes-once-a-week)
-  - [Yearly Template](#-yearly-template--once-review-quarterly)
-  - [Why this is enough](#why-this-is-enough)
-  - [🔌 The agent needs to be able to read your journal](#-the-agent-needs-to-be-able-to-read-your-journal)
-- [📋 What's in each platform folder](#-whats-in-each-platform-folder)
+- [📋 What's in each file](#-whats-in-each-file)
 - [🔄 How file loading works](#-how-file-loading-works)
 - [💰 Token load per invocation](#-token-load-per-invocation)
-- [🔧 Setup: n8n](#-setup-n8n)
-  - [Where to put the files](#-where-to-put-the-files)
-  - [Workflow structure](#-workflow-structure)
-  - [Nodes](#️-nodes)
-  - [Example workflow: file loading logic](#️-example-workflow-file-loading-logic)
-  - [Vector DB integration](#️-vector-db-integration)
-- [🐾 Setup: OpenClaw / Claw](#-setup-openclaw--claw)
-  - [How bootstrap files work](#-how-bootstrap-files-work)
-  - [Native memory + MEMORY.md](#-native-memory--memorymd)
-  - [Configuration](#️-configuration)
+- [⏰ Cron-based outreach](#-cron-based-outreach)
+- [🔌 Agent vault access](#-agent-vault-access)
 - [🏗️ Key design decisions](#️-key-design-decisions)
 
 ---
@@ -126,7 +111,7 @@ Four modes — returning, struggling, baseline, momentum — that shift based on
 Reads your daily, weekly, and yearly notes. Spots patterns you miss. Follows up on things you said you'd do.
 
 💬 **Proactive Outreach**
-Reaches out on its own — morning check-ins, evening reviews, casual pings — like a friend who texts first.
+Reaches out on its own — morning check-ins, evening reviews, casual pings — like a friend who texts first. Cron-based, isolated from your main conversation.
 
 🔮 **Predictive Coaching**
 Uses historical data to anticipate problems before they happen. Knows your risky days, your seasonal dips, your commitment patterns.
@@ -138,14 +123,13 @@ Understands that resistance isn't laziness. Knows when to push and when to just 
 
 ## 🚀 Quick start
 
-1. 📥 Clone the repo
-2. 📂 Keep the `Journal/` folder (shared across all platforms)
-3. 🔧 Pick **ONE** of the `AI Instructions` folders:
-  - `AI Instructions - n8n/` — for n8n workflow automation
-  - `AI Instructions - Claw/` — for OpenClaw/Claw/Agent-0
-4. 🗑️ Delete the other one
+1. 📥 Clone this repo
+2. 📂 The `Journal/` folder is shared — keep it
+3. 📝 Copy the files from `AI Instructions - Claw/` into your OpenClaw workspace
+4. ✏️ Fill in `IDENTITY.md`, `USER.md`, and `TOOLS.md` with your specifics
 5. 🖥️ Make the vault accessible to your agent — if you use Obsidian, [Kasmidian](https://github.com/Cityjohn/Kasmidian) + Obsidian Sync is the recommended setup
-6. 📖 Follow the platform-specific setup below
+6. ⏰ Set up cron jobs for outreach (see [Cron-based outreach](#-cron-based-outreach))
+7. 📖 Start writing your daily note — the agent handles the rest
 
 ---
 
@@ -164,20 +148,19 @@ Understands that resistance isn't laziness. Knows when to push and when to just 
   📂 Yearly planning/
     📄 2025.md                       — example yearly plan
 
-📂 AI Instructions - n8n/           ← pick one
-📂 AI Instructions - Claw/      ← pick one
-  📄 AGENTS.md
-  📄 SOUL.md
+📂 AI Instructions - Claw/
+  📄 SOUL.md                  — personality, voice, communication style
+  📄 AGENTS.md                — operating manual, rules, file loading
   📄 IDENTITY.md              ← fill in your agent's identity
   📄 USER.md                  ← fill in your human's context
-  📄 TOOLS.md                 ← fill in local setup, journal paths
-  📄 MEMORY.md
-  📄 HEARTBEAT.md
-  📄 STRATEGIES.md
-  📄 PREDICTIVE.md
-  📄 PROACTIVE_OUTREACH.md
-  📄 MEMORY_SCHEMA.md
-  📄 JOURNAL_READING.md
+  📄 TOOLS.md                 ← fill in local setup, journal paths, cron docs
+  📄 MEMORY.md                — live state, mode, goals, commitments, patterns
+  📄 HEARTBEAT.md             — heartbeat check logic
+  📄 STRATEGIES.md            — coaching strategies (loaded on demand)
+  📄 PREDICTIVE.md            — pattern prediction (loaded on demand)
+  📄 PROACTIVE_OUTREACH.md    — outreach rules (loaded on demand)
+  📄 MEMORY_SCHEMA.md         — archival rules, memory systems
+  📄 JOURNAL_READING.md       — how to parse journal entries
   📄 session-state.json       ← auto-created at runtime
 ```
 
@@ -249,49 +232,7 @@ Two minutes of structured writing per day gives the agent everything it needs to
 
 ---
 
-### 🔌 The agent needs to be able to read your journal
-
-None of this works unless the agent has **live file access to the vault**. The journal entries only become coaching data if the agent can actually open them.
-
-This means the vault — the folder containing your `Journal/` and `AI Instructions/` files — needs to live somewhere the agent can reach via the filesystem. For n8n that means a mounted path on the same host. For Claw that means a Docker volume.
-
-**If you use Obsidian to write your journal** (recommended), the simplest way to guarantee 24/7 agent access is to keep a headless Obsidian instance running on your server alongside the agent — so the vault is always present on disk, always up to date, and always readable.
-
-> #### 🖥️ [Kasmidian](https://github.com/Cityjohn/Kasmidian) — Obsidian in Docker, always on
->
-> [Kasmidian](https://github.com/Cityjohn/Kasmidian) is a Docker Compose setup that runs Obsidian headlessly in a browser-accessible container (via KasmVNC). Deploy it on the same host as your agent and mount the vault as a shared volume — your agent always has the latest journal on disk, no syncing delay, no "file not found."
->
-> Pair it with **Obsidian Sync**: write your daily notes on your phone or laptop as normal, Sync pushes them to the server, Kasmidian keeps the vault live on disk, and the agent reads them the moment they arrive.
->
-> ```
-> You (phone/laptop) → Obsidian Sync → Kasmidian vault on server
->                                              ↓
->                                         Agent reads files
-> ```
->
-> No local Obsidian install required on the server. No manual transfers. The vault is just always there.
-
----
-
-### 📋 What's in each platform folder
-
-🔧 **n8n** (8 files)
-
-
-| File                    | Delivery                      | Purpose                                         |
-| ----------------------- | ----------------------------- | ----------------------------------------------- |
-| `SOUL.md`               | System prompt (every call)    | Personality, tone, emotional awareness          |
-| `AGENTS.md`             | System prompt (every call)    | Core rules, adaptive mode, loading checklist    |
-| `MEMORY.md`             | Read + write every session    | Live state — goals, commitments, mood, patterns |
-| `STRATEGIES.md`         | Tool-read (coaching sessions) | Strategy menu by situation                      |
-| `PREDICTIVE.md`         | Tool-read (coaching sessions) | Pattern prediction from historical data         |
-| `PROACTIVE_OUTREACH.md` | Tool-read (outreach triggers) | When/how to reach out unprompted                |
-| `MEMORY_SCHEMA.md`      | Tool-read (maintenance)       | Memory systems, archival rules                  |
-| `JOURNAL_READING.md`    | Tool-read (coaching sessions) | How to parse journal entries                    |
-
-
-🐾 **Claw** (13 files)
-
+## 📋 What's in each file
 
 | File                    | Delivery                  | Purpose                                         |
 | ----------------------- | ------------------------- | ----------------------------------------------- |
@@ -309,21 +250,26 @@ This means the vault — the folder containing your `Journal/` and `AI Instructi
 | `JOURNAL_READING.md`    | Tool-read via `read_file` | How to parse journal entries                    |
 | `session-state.json`    | Auto-created at runtime   | Tracks activity, coaching state, random count   |
 
+### Setup files (fill in these)
 
-### 🔄 How file loading works
+| File           | What to fill in                                              |
+| -------------- | ------------------------------------------------------------ |
+| `IDENTITY.md`  | Your agent's name, emoji, purpose                            |
+| `USER.md`      | Your name, timezone, work context, current priorities        |
+| `TOOLS.md`     | Path to your Obsidian vault, cron schedule, device notes     |
 
-> **Claw:** Each file's YAML frontmatter tells Claw how to handle it:
+---
 
+## 🔄 How file loading works
 
-| Frontmatter           | Meaning                                                                                      | Files                                                                                               |
-| --------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `bootstrap: true`     | ⚡ Auto-injected into every session — always in context, agent never has to decide to load it | `SOUL.md`, `AGENTS.md`, `IDENTITY.md`, `USER.md`, `TOOLS.md`, `MEMORY.md`, `HEARTBEAT.md` |
-| `delivery: tool-read` | 📖 Loaded on demand — the agent reads it via `read_file` only when needed, saving tokens     | `STRATEGIES.md`, `PREDICTIVE.md`, `PROACTIVE_OUTREACH.md`, `MEMORY_SCHEMA.md`, `JOURNAL_READING.md` |
+Each file's YAML frontmatter tells OpenClaw how to handle it:
 
+| Frontmatter       | Meaning                                                                                      | Files                                                                                               |
+| ----------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `bootstrap: true` | ⚡ Auto-injected into every session — always in context, agent never has to decide to load it | `SOUL.md`, `AGENTS.md`, `IDENTITY.md`, `USER.md`, `TOOLS.md`, `MEMORY.md`, `HEARTBEAT.md`           |
+| *(no frontmatter)*| 📖 Loaded on demand — the agent reads it via `read_file` only when needed, saving tokens     | `STRATEGIES.md`, `PREDICTIVE.md`, `PROACTIVE_OUTREACH.md`, `MEMORY_SCHEMA.md`, `JOURNAL_READING.md` |
 
 Bootstrap files cost tokens on every call but guarantee the agent always has identity, rules, and current state. Tool-read files are only loaded when relevant (e.g., `STRATEGIES.md` during coaching, `PROACTIVE_OUTREACH.md` during outreach triggers).
-
-> **n8n:** Doesn't use frontmatter — the workflow nodes explicitly control what gets loaded. `SOUL.md` + `AGENTS.md` + `MEMORY.md` are always read by the workflow and injected into the AI Agent node. Other files are available to the agent via Read File tool nodes and loaded on demand based on the checklist in `AGENTS.md`.
 
 ---
 
@@ -331,48 +277,33 @@ Bootstrap files cost tokens on every call but guarantee the agent always has ide
 
 The system is designed to minimize token cost by only loading what's needed.
 
-📊 File sizes (n8n)
+📊 **File sizes** (measured from current workspace)
 
+| File                    | Lines | Est. tokens | Loaded when              |
+| ----------------------- | ----- | ----------- | ------------------------ |
+| `SOUL.md`               | ~130  | ~2,100      | Every call (bootstrap)   |
+| `AGENTS.md`             | ~160  | ~1,800      | Every call (bootstrap)   |
+| `IDENTITY.md`           | ~22   | ~170        | Every call (bootstrap)   |
+| `USER.md`               | ~26   | ~235        | Every call (bootstrap)   |
+| `TOOLS.md`              | ~80   | ~540        | Every call (bootstrap)   |
+| `MEMORY.md`             | ~210  | ~2,300      | Every call (bootstrap)   |
+| `HEARTBEAT.md`          | ~5    | ~42         | Every call (bootstrap)   |
+| **Bootstrap total**     |       | **~7,200**  |                          |
+| `STRATEGIES.md`         | ~260  | ~2,200      | Coaching sessions        |
+| `PREDICTIVE.md`         | ~70   | ~550        | Coaching sessions        |
+| `PROACTIVE_OUTREACH.md` | ~280  | ~2,300      | Outreach triggers        |
+| `MEMORY_SCHEMA.md`      | ~250  | ~1,600      | Memory maintenance       |
+| `JOURNAL_READING.md`    | ~110  | ~800        | Coaching sessions        |
 
-| File                    | Lines | Est. tokens | Loaded when                                  |
-| ----------------------- | ----- | ----------- | -------------------------------------------- |
-| `SOUL.md`               | ~40   | ~300        | Every call (system prompt)                   |
-| `AGENTS.md`             | ~110  | ~900        | Every call (system prompt)                   |
-| `MEMORY.md`             | ~100  | ~700        | Every call                                   |
-| `STRATEGIES.md`         | ~260  | ~2,200      | Coaching sessions                            |
-| `PREDICTIVE.md`         | ~70   | ~550        | Coaching sessions (skip for quick check-ins) |
-| `PROACTIVE_OUTREACH.md` | ~280  | ~2,300      | Outreach triggers                            |
-| `MEMORY_SCHEMA.md`      | ~200  | ~1,600      | Memory maintenance                           |
-| `JOURNAL_READING.md`    | ~110  | ~800        | Coaching sessions                            |
+📊 **Token cost by invocation type**
 
-
-📊 File sizes (Claw)
-
-
-| File                    | Lines | Est. tokens | Loaded when                       |
-| ----------------------- | ----- | ----------- | --------------------------------- |
-| `SOUL.md`               | ~25   | ~200        | Every call (bootstrap)            |
-| `AGENTS.md`             | ~185  | ~1,500      | Every call (bootstrap)            |
-| `MEMORY.md`             | ~100  | ~700        | Every call (bootstrap)            |
-| `HEARTBEAT.md`          | ~25   | ~200        | Every heartbeat cycle (bootstrap) |
-| `STRATEGIES.md`         | ~150  | ~1,200      | Coaching sessions                 |
-| `PREDICTIVE.md`         | ~55   | ~450        | Coaching sessions                 |
-| `PROACTIVE_OUTREACH.md` | ~210  | ~1,700      | Outreach triggers                 |
-| `MEMORY_SCHEMA.md`      | ~140  | ~1,100      | Memory maintenance                |
-| `JOURNAL_READING.md`    | ~80   | ~650        | Coaching sessions                 |
-
-
-### ⚡ What gets loaded when
-
-
-| Invocation type       | Est. tokens (n8n)               | Est. tokens (Claw)        |
-| --------------------- | ------------------------------- | ----------------------------- |
-| Every call (minimum)  | ~1,900 (SOUL + AGENTS + MEMORY) | ~2,600 (bootstrap)            |
-| Outreach trigger      | ~4,200                          | ~4,300 (bootstrap + outreach) |
-| Coaching session      | ~5,800 + journal                | ~5,500 + journal              |
-| Coaching + predictive | ~6,350 + journal                | ~5,900 + journal              |
-| Memory maintenance    | ~3,500                          | ~3,700                        |
-
+| Invocation type       | Est. tokens               | Notes                              |
+| --------------------- | ------------------------- | ---------------------------------- |
+| Every call (minimum)  | ~7,200 (bootstrap only)   | Identity + rules + state           |
+| Outreach trigger      | ~9,500 (bootstrap + outreach) | + PROACTIVE_OUTREACH.md         |
+| Coaching session      | ~10,750 + journal         | + STRATEGIES + JOURNAL_READING + notes |
+| Coaching + predictive | ~11,300 + journal         | + PREDICTIVE.md                    |
+| Memory maintenance    | ~8,800                    | + MEMORY_SCHEMA.md                 |
 
 > 💡 A typical daily note adds ~150–350 tokens. Reading today + yesterday + weekly reflection adds ~500–1,000 on top.
 >
@@ -380,223 +311,35 @@ The system is designed to minimize token cost by only loading what's needed.
 
 ---
 
-## 🔧 Setup: n8n
+## ⏰ Cron-based outreach
 
-Use the `AI Instructions - n8n/` folder. Delete the other one.
+All proactive outreach uses **isolated cron jobs** — not the native heartbeat. This prevents heartbeat interrupts from blocking your main conversation.
 
-> **How it works in 30 seconds:**
->
-> 1. Place the vault on the same machine as n8n (or connect cloud storage)
-> 2. Build a workflow that reads `SOUL.md` + `AGENTS.md` as the system prompt, and `MEMORY.md` as context — these load on **every** call
-> 3. Add schedule triggers for outreach (morning, evening, weekly, random) — each one also loads `PROACTIVE_OUTREACH.md`
-> 4. Give the AI Agent node Read/Write File tools so it can load `STRATEGIES.md`, `JOURNAL_READING.md`, and `PREDICTIVE.md` on demand during coaching sessions
-> 5. After each run, write updated `MEMORY.md` back to disk and send the agent's message to the user via Telegram/Slack/Discord
->
-> That's it. The workflow controls what loads when — the agent just coaches.
-
-### 📂 Where to put the files
-
-The n8n AI Agent node needs access to these files. You have two options:
-
-**Option A: Local filesystem (recommended for self-hosted n8n)**
-
-Place the entire repo folder on the same machine running n8n. Use Read/Write File nodes with absolute paths:
+### Architecture
 
 ```
-/path/to/vault/AI Instructions - n8n/SOUL.md
-/path/to/vault/AI Instructions - n8n/AGENTS.md
-/path/to/vault/AI Instructions - n8n/MEMORY.md
-/path/to/vault/Journal/Day to Day/2025-03-15.md
+┌─────────────────────────────────────────────────┐
+│                  Cron Jobs                       │
+│                                                  │
+│  🌅 8:00 AM   morning coaching check-in          │
+│  🎲 11:15 AM  random engagement (probabilistic)  │
+│  ☀️ 12:35 PM  noon follow-up                     │
+│  🎲 3:00 PM   random engagement (probabilistic)  │
+│  🌙 6:00 PM   evening coaching wrap-up            │
+│  🎲 8:30 PM   random engagement (probabilistic)  │
+│  🔧 2:00 AM   nightly maintenance                │
+│                                                  │
+│  Each job reads session-state.json for context   │
+│  Each job writes back to session-state.json      │
+└─────────────────────────────────────────────────┘
 ```
-
-If n8n runs in Docker, mount the vault as a volume:
-
-```yaml
-# docker-compose.yml (add to your n8n service)
-volumes:
-  - /path/to/vault:/vault
-```
-
-Then reference files as `/vault/AI Instructions - n8n/SOUL.md`, etc.
-
-**Option B: Google Drive / cloud storage**
-
-Store the vault in Google Drive, Dropbox, or similar. Use the corresponding n8n nodes (Google Drive node, etc.) to read and write files. This works well if n8n is cloud-hosted.
-
-### 🔁 Workflow structure
-
-```
-Schedule Trigger → Code (random roll) → Read Files → AI Agent → Write MEMORY.md → Send Message
-```
-
-### ⚙️ Nodes
-
-**1. Schedule Trigger**
-
-Create separate trigger nodes for each outreach schedule:
-
-
-| Trigger              | Cron          | Purpose                             |
-| -------------------- | ------------- | ----------------------------------- |
-| 🌅 Morning check-in  | `0 8 * `* *   | Say good morning / check daily note |
-| ☀️ Midday casual     | `0 12 * * `*  | Casual check-in (50% random chance) |
-| 🌙 Evening review    | `0 21 * * *`  | Check end-of-day review             |
-| 📅 Wednesday drift   | `0 10 * * 3`  | Mid-week progress check             |
-| 📝 Sunday reflection | `0 18 * * 0`  | Weekly reflection prompt            |
-| ✅ Commitment scan    | `0 9 * * *`   | Follow up on open commitments       |
-| 🎲 Random ping       | Interval (3h) | Pure social check-in (30% chance)   |
-
-
-For the random/casual triggers, add a Code node after the Schedule Trigger that generates `Math.random()` and only continues if it's below the threshold.
-
-**2. Read Files (Read File nodes or Code node)**
-
-The workflow pre-loads files so the agent doesn't have to decide. Use Read File nodes to load:
-
-
-| File                    | When to load             | Pass as                                    |
-| ----------------------- | ------------------------ | ------------------------------------------ |
-| `SOUL.md`               | Always                   | System prompt (concatenate with AGENTS.md) |
-| `AGENTS.md`             | Always                   | System prompt (concatenate with SOUL.md)   |
-| `MEMORY.md`             | Always                   | User message context                       |
-| `PROACTIVE_OUTREACH.md` | Outreach triggers        | User message context                       |
-| Today's daily note      | Always (check if exists) | User message context                       |
-| Yesterday's daily note  | Always (check if exists) | User message context                       |
-
-
-Use a Code node to concatenate `SOUL.md` + `AGENTS.md` into one string for the system prompt field.
-
-**3. AI Agent node**
-
-System prompt field: `{{ $json.soul + "\n\n" + $json.agents }}`
-
-User message: construct based on the trigger type and file contents:
-
-```
-Trigger: morning_checkin
-Current memory: [contents of MEMORY.md]
-Today's note exists: [yes/no]
-Yesterday's note: [contents or "none"]
-Outreach rules: [contents of PROACTIVE_OUTREACH.md]
-
-Determine if outreach is warranted. If yes, compose a message following the rules.
-```
-
-Give the agent file tools (Read/Write File) so it can load `STRATEGIES.md`, `PREDICTIVE.md`, and `JOURNAL_READING.md` on demand during coaching sessions — the loading checklist in `AGENTS.md` tells it when.
-
-**4. Write MEMORY.md**
-
-After the AI responds, use a Write File node to save the updated `MEMORY.md` back to the vault. The agent will include memory updates in its response if commitments, strategy log entries, or mood scores changed.
-
-**5. Send Message**
-
-Route to the user via Telegram, Slack, Discord, email, or any preferred channel.
-
-### 🗺️ Example workflow: file loading logic
-
-Below is what a complete n8n workflow looks like with the decision logic for which files to load. You'd build this as separate trigger branches that merge into a shared Code node.
-
-```mermaid
-flowchart TD
-    T1[🌅 Schedule: morning 8am]
-    T2[☀️ Schedule: midday 12pm]
-    T3[🌙 Schedule: evening 9pm]
-    T4[📅 Schedule: weekly Sun 6pm]
-    T5[💬 Webhook: user chat message]
-
-    T1 & T2 & T3 & T4 & T5 --> GATE["Code\nSet trigger type\nRoll random gate"]
-
-    GATE -->|random gate failed| STOP([stop — skip this run])
-    GATE -->|passed| LOAD["Read Files — always\nSOUL.md · AGENTS.md · MEMORY.md"]
-
-    LOAD --> DETECT["Code\nDetect context type\nfrom trigger + message"]
-
-    DETECT -->|outreach trigger| OUT[Outreach]
-    DETECT -->|coaching session| COACH[Coaching]
-    DETECT -->|casual chat| CHAT[Chat]
-
-    OUT --> OUTFILES["Read File\nPROACTIVE_OUTREACH.md"]
-    COACH --> COACHFILES["Read Files\nSTRATEGIES.md\nJOURNAL_READING.md\ntoday's note\nyesterday's note\nweekly reflection\n(optional: PREDICTIVE.md)"]
-
-    OUTFILES & COACHFILES & CHAT --> BUILD["Code\nBuild system prompt: SOUL + AGENTS\nBuild user message: trigger + loaded files"]
-
-    BUILD --> AGENT["🤖 AI Agent\n─────────────────\nSystem: SOUL + AGENTS\nMessage: trigger · memory · context\nTools: Read File · Write File · Vector DB"]
-
-    AGENT --> WRITE[Write File\nMEMORY.md]
-    WRITE --> SEND[Send Message\nTelegram · Slack · Discord]
-```
-
-> 🔑 **Key principle:** The workflow decides what to load, not the agent. Scheduled triggers always pre-load the outreach file. User-initiated messages pre-load coaching files. The agent only makes one decision on its own: "Should I also read `PREDICTIVE.md`?" — and `AGENTS.md` tells it when.
-
-### 🗄️ Vector DB integration
-
-Use a Qdrant, Pinecone, or Supabase vector store node:
-
-- **Embedding:** When a daily/weekly note is completed, chunk it and embed with metadata tags
-- **Retrieval:** Before the AI agent runs, query for relevant past entries and include in context
-
----
-
-## 🐾 Setup: OpenClaw / Claw
-
-Use the `AI Instructions - Claw/` folder. Delete the other one.
-
-> **How it works in 30 seconds:**
->
-> 1. Mount your vault into the Claw Docker container
-> 2. Claw auto-loads 3 bootstrap files on every session: `SOUL.md` (personality), `AGENTS.md` (rules + adaptive mode), and `MEMORY.md` (live state)
-> 3. The agent loads other files (`STRATEGIES.md`, `JOURNAL_READING.md`, `PREDICTIVE.md`) on demand via `read_file` — the checklist in `AGENTS.md` tells it when
-> 4. Set up cron jobs: 3 coaching check-ins, 3 random engagement (probabilistic), 1 nightly maintenance
-> 5. A shared `session-state.json` file coordinates between crons — no native heartbeat needed
->
-> No workflow builder needed. Drop the files in, create the cron jobs, and the agent runs itself.
-
-### ⚡ How bootstrap files work
-
-Claw auto-loads files from the workspace into every session. The three bootstrap files (`SOUL.md`, `AGENTS.md`, `MEMORY.md`) are injected automatically — the agent never has to decide to read them.
-
-Other files (`STRATEGIES.md`, `PREDICTIVE.md`, etc.) are read on-demand via the `read_file` tool. The loading checklist in `AGENTS.md` tells the agent when to read each one.
-
-### 🧠 Native memory + MEMORY.md
-
-Claw-type agents have **native memory** — persistent conversation history across sessions. That handles the friendship layer: tone, inside jokes, personal context, what you talked about last time.
-
-`MEMORY.md` adds structured coaching data on top: goals, commitments, strategy log, mood trends, and pattern tracking. Things that benefit from explicit structure rather than conversational recall.
-
-### ⚙️ Configuration
-
-**1. Mount the vault**
-
-```yaml
-# docker-compose.yml
-services:
-  agent:
-    image: openclaw/claw:latest
-    volumes:
-      - /path/to/kasmidian/vault:/vault
-    environment:
-      - WORKSPACE=/vault/AI Instructions - Claw
-```
-
-**2. ⏰ Cron-based outreach (replaces native heartbeat)**
-
-All proactive outreach uses isolated cron jobs. The native heartbeat is **disabled** — crons handle everything. This prevents heartbeat interrupts from blocking your main conversation.
-
-### Cron architecture
-
-| Component | Count | Schedule | Purpose |
-|---|---|---|---|
-| **Coaching crons** | 3 | 8 AM, 12:35 PM, 6 PM | Goal-focused check-ins, strategy rotation |
-| **Random engagement** | 3 | ~11:15 AM, ~3 PM, ~8:30 PM | Casual, philosophical, or funny messages |
-| **Nightly maintenance** | 1 | 2 AM | Archives, mood rollup, resets daily state |
-| **Email check** | 1 | Every 30 min | Optional, can use separate bot account |
 
 ### How it works
 
 - **Isolated sessions** — each cron runs independently, never blocks the main chat
-- **session-state.json** — shared state file tracks `lastActivity`, coaching sent/responses, random count. All crons read this.
+- **session-state.json** — shared state file tracks `lastActivity`, coaching sent/responses, random count
 - **Activity awareness** — random crons check `lastActivity` timestamp; skip if user was active in last 90 minutes
-- **Adaptive probability** — random engagement base chance is 15%, but increases by 20% per unanswered coaching message (up to 90%)
+- **Adaptive probability** — random engagement base chance is 15%, increases by 20% per unanswered coaching message (up to 90%)
 - **Self-cleaning** — nightly maintenance archives old data, rolls up mood/energy, enforces memory limits
 
 ### Two vibes
@@ -607,17 +350,9 @@ The user typically has **two sides**: a playful/joking side AND a serious philos
 
 ### Setup
 
-The full cron commands, prompt templates, and configuration details are in `AI Instructions - Claw/AGENTS.md` under "⏰ Cron-Based Outreach System".
-
-Key things to configure:
-1. Replace `YOUR_TIMEZONE` with your timezone (e.g., `Europe/Amsterdam`, `America/New_York`)
-2. Replace `YOUR_CHAT_ID` with your Telegram chat ID (numeric)
-3. Optionally set up a second Telegram bot for the email check (keeps logs out of main chat)
-4. Adjust cron times to your schedule
-
-### 🗂️ session-state.json
-
-Create this file in your workspace root — it's the shared brain for all cron jobs:
+1. Replace `YOUR_TIMEZONE` in TOOLS.md with your timezone (e.g., `Europe/Amsterdam`, `America/New_York`)
+2. Set up cron jobs via OpenClaw cron or system crontab
+3. Create `session-state.json` in your workspace root:
 
 ```json
 {
@@ -629,35 +364,43 @@ Create this file in your workspace root — it's the shared brain for all cron j
 }
 ```
 
-The nightly maintenance resets this file each night. Don't worry about it growing — it's intentionally tiny.
+The nightly maintenance resets this file each night.
 
-### 🛠️ Tool calls
+---
 
+## 🔌 Agent vault access
 
-| Tool            | Purpose                            | Maps to                                  |
-| --------------- | ---------------------------------- | ---------------------------------------- |
-| `read_file`     | Read any file in the vault         | Instruction files, journal entries       |
-| `write_file`    | Write to the vault                 | `MEMORY.md` updates, new journal entries |
-| `list_files`    | Check what files exist             | Detect missing daily/weekly notes        |
-| `vector_search` | Semantic search of past entries    | Pattern retrieval, success tracking      |
-| `vector_embed`  | Store content for future retrieval | Daily notes, insights, archived memory   |
+None of this works unless the agent has **live file access to the vault**. The journal entries only become coaching data if the agent can actually open them.
 
+This means the vault — the folder containing your `Journal/` and `AI Instructions/` files — needs to live somewhere the agent can reach via the filesystem.
+
+**If you use Obsidian to write your journal** (recommended), the simplest way to guarantee 24/7 agent access is to keep a headless Obsidian instance running on your server alongside the agent — so the vault is always present on disk, always up to date, and always readable.
+
+> #### 🖥️ [Kasmidian](https://github.com/Cityjohn/Kasmidian) — Obsidian in Docker, always on
+>
+> [Kasmidian](https://github.com/Cityjohn/Kasmidian) is a Docker Compose setup that runs Obsidian headlessly in a browser-accessible container (via KasmVNC). Deploy it on the same host as your agent and mount the vault as a shared volume — your agent always has the latest journal on disk, always up to date.
+>
+> Pair it with **Obsidian Sync**: write your daily notes on your phone or laptop as normal, Sync pushes them to the server, Kasmidian keeps the vault live on disk, and the agent reads them the moment they arrive.
+>
+> ```
+> You (phone/laptop) → Obsidian Sync → Kasmidian vault on server
+>                                              ↓
+>                                         Agent reads files
+> ```
+>
+> No local Obsidian install required on the server. No manual transfers. The vault is just always there.
 
 ---
 
 ## 🏗️ Key design decisions
 
-**Why split into platform folders?**
+**Why split into bootstrap and on-demand files?**
 
-Each platform loads files differently. n8n pre-loads via workflow nodes, Claw auto-injects bootstrap files. Platform-specific folders let each version use the right file names, loading mechanisms, and scheduling patterns without compromises.
+Bootstrap files (~7,200 tokens) guarantee the agent always has identity, rules, and current state. On-demand files (STRATEGIES, PREDICTIVE, etc.) are only loaded when relevant — a coaching session needs them, an outreach ping doesn't. This keeps everyday invocations lean.
 
-**Why merge adaptive mode into the system prompt?**
+**Why adaptive mode in MEMORY.md instead of AGENTS.md?**
 
-Adaptive mode (returning/struggling/baseline/momentum) affects every interaction — outreach tone, journal ask level, strategy pool. It's too important to risk the agent forgetting to load it. The ~500 token cost is worth paying on every call.
-
-**Why split out predictive coaching?**
-
-Predictive coaching (~550 tokens) queries the vector DB for historical patterns. It's valuable for full coaching sessions but unnecessary for quick check-ins or outreach pings. Keeping it separate saves tokens when it's not needed.
+Mode transitions are reference material — needed when evaluating which mode John is in, not every reply. Placing them next to the current mode state in MEMORY.md (which is always in context) makes them accessible without bloating AGENTS.md.
 
 **Why a flat memory file instead of just the vector DB?**
 
@@ -670,6 +413,10 @@ Without it, the memory file grows indefinitely. The 30-day cycle moves history t
 **Why log strategies?**
 
 Without a strategy log, the AI repeats the same approach to the same pattern. The log enables rotation and tracks what actually works for this specific person.
+
+**Why cron instead of native heartbeat?**
+
+Cron jobs run in isolated sessions — they never interrupt the main conversation. The native heartbeat can cause context bleed and interrupt mid-thought. Cron gives precise timing control and prevents the agent from going quiet during important conversations.
 
 ---
 
