@@ -8,14 +8,14 @@ triggers: scheduled via OpenClaw cron jobs (isolated sessions)
 
 ## Architecture
 
-All outreach uses **isolated cron jobs** — they never block the main session. The native heartbeat is disabled.
+All outreach uses **isolated cron jobs** - they never block the main session. The native heartbeat is disabled.
 
 ### Outreach types
 
 | Type | Count/day | Schedule | Purpose |
 |---|---|---|---|
 | **Coaching** | 3 | 8 AM, 12:35 PM, 6 PM | Goal-focused, reads journal + MEMORY.md + STRATEGIES.md |
-| **Random engagement** | 0-3 (probabilistic) | ~11 AM, ~3 PM, ~8:30 PM | Casual, philosophical, funny — pure engagement |
+| **Random engagement** | 0-3 (probabilistic) | ~11 AM, ~3 PM, ~8:30 PM | Casual, philosophical, funny - pure engagement |
 | **Maintenance** | 1 (nightly) | 2 AM | Archives, rollup, state reset (silent) |
 
 ### How crons coordinate
@@ -32,9 +32,9 @@ All crons read and write `memory/session-state.json`:
 }
 ```
 
-- `lastActivity` — ISO timestamp, updated by main session when user chats. Random crons skip if < 90 min ago.
-- `coachingSent` / `coachingResponses` — track coaching flow. Random crons use this for probability calculation.
-- `randomSent` — daily count. Hard cap at 3.
+- `lastActivity` - ISO timestamp, updated by main session when user chats. Random crons skip if < 90 min ago.
+- `coachingSent` / `coachingResponses` - track coaching flow. Random crons use this for probability calculation.
+- `randomSent` - daily count. Hard cap at 3.
 
 ## Coaching outreach
 
@@ -43,7 +43,7 @@ Coaching crons read full context: MEMORY.md, daily notes, session-state.json, ST
 ### Strategy rotation
 
 Before selecting a coaching approach:
-1. Check strategy log in MEMORY.md — what was tried for this pattern before?
+1. Check strategy log in MEMORY.md - what was tried for this pattern before?
 2. What was the result?
 3. Previously worked → use it again
 4. Previously no effect → pick different one
@@ -97,15 +97,15 @@ Pick ONE, don't repeat the recent topic:
 
 | Topic | Examples |
 |---|---|
-| **Philosophical** | Markets, innovation, human psychology, societal critique, evolutionary behavior, employment systems, attraction dynamics. Go deep — no ceiling on concepts. |
+| **Philosophical** | Markets, innovation, human psychology, societal critique, evolutionary behavior, employment systems, attraction dynamics. Go deep - no ceiling on concepts. |
 | **Funny/Absurd** | Weird animal facts, absurd observations about human behavior, the sheer ridiculousness of existence |
-| **Knowledge** | Astrophysics, AI breakthroughs, economics, science, technology — genuinely interesting discoveries |
+| **Knowledge** | Astrophysics, AI breakthroughs, economics, science, technology - genuinely interesting discoveries |
 | **Light** | Casual warm presence. "Hey. What's on your mind?" No agenda. |
 
 ### Adapting to engagement
 
 - **If coaching messages are being answered:** Keep random messages light, fun, no agenda. Pure engagement.
-- **If coaching messages are going unanswered:** Random messages can subtly steer toward coaching — but shouldn't always. Sometimes still just fun.
+- **If coaching messages are going unanswered:** Random messages can subtly steer toward coaching - but shouldn't always. Sometimes still just fun.
 - **Don't be formulaic.** Surprise the user. Be unpredictable.
 
 ## Nightly maintenance (silent)

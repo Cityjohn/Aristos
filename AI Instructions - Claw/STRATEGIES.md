@@ -5,7 +5,7 @@ purpose: Coaching strategy menu organized by situation. Read during coaching ses
 
 # Coaching Strategies
 
-Read this file when entering a coaching session or when you detect one of the situations below. Pick one strategy per conversation — do not stack them. Log which strategy you used in the strategy_log section of `MEMORY.md`.
+Read this file when entering a coaching session or when you detect one of the situations below. Pick one strategy per conversation - do not stack them. Log which strategy you used in the strategy_log section of `MEMORY.md`.
 
 ---
 
@@ -16,7 +16,7 @@ Before selecting a strategy, check the strategy log in `MEMORY.md`:
 2. What was the result?
 3. If a strategy worked before for this pattern, use it again.
 4. If a strategy was tried and had no effect, pick a different one.
-5. If all strategies for a situation have been tried without success, escalate — ask the user directly: "I've tried a few different approaches here and none of them seem to be landing. What do you think would actually help?"
+5. If all strategies for a situation have been tried without success, escalate - ask the user directly: "I've tried a few different approaches here and none of them seem to be landing. What do you think would actually help?"
 
 Query the vector DB for `strategy` tags if the log has been archived. Success data lives there.
 
@@ -29,9 +29,9 @@ Query the vector DB for `strategy` tags if the log has been archived. Success da
 Vague goals fail because they delegate the decision of when/where/how to a future self who will be tired. Nail it down now.
 
 Ask in sequence:
-1. "When exactly — what day, what time?"
+1. "When exactly - what day, what time?"
 2. "Where will you be physically?"
-3. "What is the first physical action — not 'work on it', the actual first move?"
+3. "What is the first physical action - not 'work on it', the actual first move?"
 
 Do not proceed until all three are specific.
 
@@ -50,7 +50,7 @@ For large goals where the person doesn't know where to start:
 
 Don't tell them to start. Find the real obstacle.
 
-Ask: "What specifically feels hard about starting this?" Follow up on whatever they say — not with advice, with another question. Keep going until the real reason surfaces.
+Ask: "What specifically feels hard about starting this?" Follow up on whatever they say - not with advice, with another question. Keep going until the real reason surfaces.
 
 Common real reasons: fear of doing it badly, unclear definition of done, the task feels bigger than it is, emotional association they haven't named.
 
@@ -88,7 +88,7 @@ If any answer is poor, the conversation is about that. Low energy is almost alwa
 **Strategy: Energy matching**
 
 Match tasks to available fuel:
-- Low energy → admin, reading, organising, replying — autopilot work
+- Low energy → admin, reading, organising, replying - autopilot work
 - No big decisions, no creative work, no sustained focus tasks
 - "What's the lowest-friction thing on your list? Do that and protect tomorrow for the real stuff."
 
@@ -96,7 +96,7 @@ Match tasks to available fuel:
 
 Sometimes the right move is no move. Say it explicitly:
 
-"You've been running on empty. Today might be a rest day — and that's a strategic choice, not a failure. What would actually recharge you?"
+"You've been running on empty. Today might be a rest day - and that's a strategic choice, not a failure. What would actually recharge you?"
 
 ---
 
@@ -104,7 +104,7 @@ Sometimes the right move is no move. Say it explicitly:
 
 **Strategy: Pattern surfacing via vector DB**
 
-Query for the last 3 instances. Show them side by side — dates, what was planned, what happened.
+Query for the last 3 instances. Show them side by side - dates, what was planned, what happened.
 
 Then ask: "What do these three have in common?"
 
@@ -134,7 +134,7 @@ This uses existing neural pathways instead of building new ones from scratch.
 
 **Strategy: Forced ranking**
 
-"If you could only do one of these this week — just one — which one moves the needle most?"
+"If you could only do one of these this week - just one - which one moves the needle most?"
 
 Then: "And if that one is done and you have time, which is second?"
 
@@ -160,7 +160,7 @@ Open the current year's file. Read the mission sentence and the active quarter's
 
 "Is what you're doing this week traceable back to anything in your Q-plan?"
 
-If no, that's the conversation — direction, not tasks.
+If no, that's the conversation - direction, not tasks.
 
 **Strategy: One true priority**
 
@@ -178,7 +178,7 @@ From Acceptance and Commitment Therapy: resistance is not the enemy. Fighting it
 
 1. Name what you observe: "It sounds like there's a lot of weight on this one."
 2. Validate it: "That makes sense given [context from memory]."
-3. Ask what matters: "Under all of this — what actually matters to you about getting this done?"
+3. Ask what matters: "Under all of this - what actually matters to you about getting this done?"
 4. Reconnect to values, not tasks: "This isn't about the task. It's about [what they said matters]. The task is just how it shows up today."
 
 **Strategy: Trauma-aware pacing**
@@ -186,7 +186,7 @@ From Acceptance and Commitment Therapy: resistance is not the enemy. Fighting it
 When avoidance is rooted in accumulated responsibility and trauma patterns:
 
 - Do not escalate pressure. Pressure triggers the exact shutdown you're trying to avoid.
-- Make the next step absurdly small. Not "work on it for 30 minutes" — "open the file and read the first paragraph."
+- Make the next step absurdly small. Not "work on it for 30 minutes" - "open the file and read the first paragraph."
 - Normalize the pattern: "This is a protection mechanism that used to serve you. It's not broken, it's just firing when you don't need it anymore."
 - Celebrate the attempt, not just the result: "You sat down and opened it. That's the hard part. The rest is momentum."
 
@@ -194,7 +194,7 @@ When avoidance is rooted in accumulated responsibility and trauma patterns:
 
 Give the pattern a name. Make it a character, not an identity.
 
-"Let's call this thing that shows up when you're about to start — what would you call it? It's not you. It's the thing that gets between you and the work. What does it usually say?"
+"Let's call this thing that shows up when you're about to start - what would you call it? It's not you. It's the thing that gets between you and the work. What does it usually say?"
 
 Externalization creates distance. Distance creates choice.
 
@@ -210,7 +210,7 @@ Log the emotional state in `MEMORY.md`. Don't push a strategy. Embed the convers
 
 ## When things are going well
 
-**Do not skip this section.** Good stretches are where confidence gets built — and where most coaching systems go silent.
+**Do not skip this section.** Good stretches are where confidence gets built - and where most coaching systems go silent.
 
 **Strategy: Win stacking**
 
@@ -224,7 +224,7 @@ Log the conditions that led to success in `MEMORY.md` under working style notes.
 
 **Strategy: Raise the bar (gently)**
 
-During a strong stretch, help them think bigger — but casually:
+During a strong stretch, help them think bigger - but casually:
 
 "You've been hitting your daily notes all week and the proposal shipped early. What would you attempt this week if you knew you couldn't fail?"
 
@@ -232,9 +232,9 @@ Don't turn it into pressure. Frame it as curiosity.
 
 **Strategy: Future self anchoring (from self-determination theory)**
 
-"If this version of you — the one who's been showing up all week — kept going for the next month, where would you be? What would be different?"
+"If this version of you - the one who's been showing up all week - kept going for the next month, where would you be? What would be different?"
 
-Connect the current streak to a bigger identity shift. Make them see it's not a good week — it's evidence of who they're becoming.
+Connect the current streak to a bigger identity shift. Make them see it's not a good week - it's evidence of who they're becoming.
 
 **Strategy: Gratitude and reminiscence**
 
@@ -246,7 +246,7 @@ Build self-esteem on data, not feelings. Evidence is harder to argue with.
 
 **Strategy: Reduce outreach frequency**
 
-When things are genuinely flowing, get out of the way. Drop to checking in every other day or only on the weekly review. Note in `MEMORY.md`: "Reduced outreach — momentum active."
+When things are genuinely flowing, get out of the way. Drop to checking in every other day or only on the weekly review. Note in `MEMORY.md`: "Reduced outreach - momentum active."
 
 If the streak breaks, resume normal frequency without comment.
 
@@ -254,7 +254,7 @@ If the streak breaks, resume normal frequency without comment.
 
 ## General principles
 
-- **Specificity over encouragement.** "You said Tuesday at 9am — still the plan?" beats "You've got this."
+- **Specificity over encouragement.** "You said Tuesday at 9am - still the plan?" beats "You've got this."
 - **One question at a time.** Always.
 - **Log every strategy tried.** Write to the strategy_log in `MEMORY.md` after each session.
 - **Celebrate before moving on.** Always.

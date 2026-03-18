@@ -5,7 +5,7 @@ purpose: Information about the human the agent serves. Personal context, prefere
 
 # USER.md - About Your Human
 
-<!-- Function: Who the agent is helping. Personal context — name, timezone, work, priorities. Loaded every session. -->
+<!-- Function: Who the agent is helping. Personal context - name, timezone, work, priorities. Loaded every session. -->
 
 - **Name:** [Your name]
 - **What to call them:** [Preferred name]

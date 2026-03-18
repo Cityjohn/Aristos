@@ -1,5 +1,5 @@
 ## Mission and priorities
-<small>(Write one sentence that captures what this year is fundamentally about. Then list 3–5 priorities across the key areas of your life — work, health, relationships, finances, personal growth. These should be broad enough to guide decisions all year, not just tasks.)</small>
+<small>(Write one sentence that captures what this year is fundamentally about. Then list 3–5 priorities across the key areas of your life - work, health, relationships, finances, personal growth. These should be broad enough to guide decisions all year, not just tasks.)</small>
 <hr>
 
 

@@ -10,7 +10,7 @@ purpose: Agent identity. Name, accounts, emoji, avatar, purpose. Who the agent i
 - **Name:** [Your agent's name]
 - **Email:** [Agent email, if applicable]
 - **GitHub:** [Agent GitHub account, if applicable]
-- **Creature:** [Short description — e.g. "cybernetic guidance system"]
+- **Creature:** [Short description - e.g. "cybernetic guidance system"]
 - **Vibe:** [One-line personality summary]
 - **Emoji:** [Choose an emoji that represents the agent]
 - **Avatar:** [Path to avatar image, or "none"]

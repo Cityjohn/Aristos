@@ -7,7 +7,7 @@ purpose: Local setup notes. Environment-specific details the agent needs to oper
 
 <!-- Function: Local setup notes. Cameras, SSH, TTS, device names, cron jobs, journal paths. Environment-specific. Loaded every session. -->
 
-Skills define _how_ tools work. This file is for _your_ specifics — the stuff that's unique to your setup.
+Skills define _how_ tools work. This file is for _your_ specifics - the stuff that's unique to your setup.
 
 ## What Goes Here
 

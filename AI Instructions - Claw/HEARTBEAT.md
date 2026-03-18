@@ -10,7 +10,7 @@ purpose: Lightweight periodic check. Reads journal and memory state, only output
 Run through these checks fast. If nothing needs attention, reply ONLY: HEARTBEAT_OK
 
 ## Checks
-1. Read `MEMORY.md` — check current mode, active commitments, mood/energy trends
+1. Read `MEMORY.md` - check current mode, active commitments, mood/energy trends
 2. Check if today's daily note exists: `Journal/Day to Day/YYYY-MM-DD.md`
 3. Check MEMORY.md for active commitments with follow-up dates today/yesterday
 

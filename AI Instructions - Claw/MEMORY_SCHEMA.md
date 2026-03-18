@@ -11,10 +11,10 @@ You have multiple memory systems. This file defines what goes where, size limits
 
 ## System 1: Flat memory file (`MEMORY.md`)
 
-**What it is:** A structured markdown file holding only the current state — what matters right now. It is not a historical record. It is a working document that stays small and focused.
+**What it is:** A structured markdown file holding only the current state - what matters right now. It is not a historical record. It is a working document that stays small and focused.
 
 **Read rule:** Always read this first, before any journal file.
-**Write rule:** Update at the end of every session. Keep entries short — select words based on coaching importance, not completeness.
+**Write rule:** Update at the end of every session. Keep entries short - select words based on coaching importance, not completeness.
 
 ### Size limits
 
@@ -27,7 +27,7 @@ You have multiple memory systems. This file defines what goes where, size limits
 | Key people | 10 | Remove people no longer relevant to active goals |
 | Mood/energy daily | 7 days rolling | Delete daily entries older than 7 days |
 | Mood/energy weekly avg | 12 weeks rolling | Delete weekly averages older than 12 weeks |
-| Mood/energy monthly avg | Indefinite | Never delete — this is long-term trend data |
+| Mood/energy monthly avg | Indefinite | Never delete - this is long-term trend data |
 | Recurring patterns | 10 active | Archive resolved patterns to vector DB |
 | Strategy log | 20 entries | Archive oldest entries to vector DB |
 | Relationship & life context | 5 active | Archive to vector DB when resolved or stale |
@@ -39,7 +39,7 @@ When any section approaches its limit, run the archival process described below.
 - One line per entry. No paragraphs.
 - Prioritise action-relevant information over narrative.
 - Bad: "User mentioned they've been struggling with phone addiction again, similar to what happened last month when they were also dealing with dating stress"
-- Good: "Phone distraction — recurs under emotional stress. Last: 2025-03-14"
+- Good: "Phone distraction - recurs under emotional stress. Last: 2025-03-14"
 
 ---
 
@@ -72,7 +72,7 @@ For strategy log entries older than 30 days:
 2. At the end of each month, calculate the monthly average and add a row to the monthly averages table.
 3. Delete daily entries older than 7 days.
 4. Delete weekly averages older than 12 weeks.
-5. Never delete monthly averages — they are the long-term trend line.
+5. Never delete monthly averages - they are the long-term trend line.
 
 ### Step 5: Write the monthly summary
 
@@ -111,13 +111,13 @@ Embed the monthly summary (format below) and add a row to the monthly summaries 
 - **Read by all crons** before deciding whether to send a message
 - **Written by crons** after sending messages or detecting responses
 - **Reset nightly** by the maintenance cron (fresh state each day)
-- **`lastActivity` updated by main session** — agent sets this at session start via the session-activity tracking protocol in AGENTS.md
-- **Size is always small** — it resets daily, never grows beyond ~200 bytes
+- **`lastActivity` updated by main session** - agent sets this at session start via the session-activity tracking protocol in AGENTS.md
+- **Size is always small** - it resets daily, never grows beyond ~200 bytes
 
 ### How random crons use it
 
-1. Check `lastActivity` — if < 90 minutes ago, reply NO_REPLY (don't interrupt)
-2. Check `randomSent` — if >= 3, reply NO_REPLY (daily limit)
+1. Check `lastActivity` - if < 90 minutes ago, reply NO_REPLY (don't interrupt)
+2. Check `randomSent` - if >= 3, reply NO_REPLY (daily limit)
 3. Calculate probability using `coachingSent` and `coachingResponses` arrays
 4. If sending, increment `randomSent` and update `lastActivity`
 
@@ -128,12 +128,12 @@ Embed the monthly summary (format below) and add a row to the monthly summaries 
 **What it is:** The long-term memory. Semantic search index for retrieving relevant history when the current situation resembles something from the past.
 
 **Query rule:** Query the vector DB when:
-- The user is repeating a struggle — find the last 2–3 instances
+- The user is repeating a struggle - find the last 2–3 instances
 - A topic, person, or project may have history in the journal
 - You want to show a pattern across time with evidence
 - You need to check which strategies worked for a similar situation before
 - You want to calculate success rates (commitments kept vs. dropped)
-- **Predictive checks** — at session start, query for day-of-week patterns, streak history, similar commitment outcomes, emotional accumulation, and seasonal/monthly trends (see `STRATEGIES.md` — Predictive coaching)
+- **Predictive checks** - at session start, query for day-of-week patterns, streak history, similar commitment outcomes, emotional accumulation, and seasonal/monthly trends (see `STRATEGIES.md` - Predictive coaching)
 
 ### What gets embedded
 
@@ -151,7 +151,7 @@ Embed the monthly summary (format below) and add a row to the monthly summaries 
 | Mode transition | When adaptive mode changes | `mode-change`, `YYYY-MM-DD`, `[from]-to-[to]` |
 | Streak data | When a momentum streak breaks or begins | `streak`, `YYYY-MM-DD`, `[start/break]`, `[length]` |
 
-The last row is critical: **you are not limited to the triggers above.** If you encounter something during a session — a useful insight, a meaningful statement from the user, a connection between two patterns, a strategy that clearly clicked — embed it immediately with a descriptive tag. Use your judgment. The vector DB is cheap; missed context is expensive.
+The last row is critical: **you are not limited to the triggers above.** If you encounter something during a session - a useful insight, a meaningful statement from the user, a connection between two patterns, a strategy that clearly clicked - embed it immediately with a descriptive tag. Use your judgment. The vector DB is cheap; missed context is expensive.
 
 ### Conversations, life events, and emotional context
 
@@ -171,9 +171,9 @@ These do NOT go in `MEMORY.md`. They go in the vector DB. The flat file tracks c
 **Embedding format for conversations:**
 
 ```
-# Conversation — [YYYY-MM-DD]
+# Conversation - [YYYY-MM-DD]
 Type: [life-event / frustration / emotional / relationship / project / personal]
-Summary: [1–2 sentences — what happened, what it means for coaching]
+Summary: [1–2 sentences - what happened, what it means for coaching]
 Relevant pattern: [link to pattern name if applicable, or "none"]
 User quote: [one key sentence in their own words, if worth preserving]
 ```
@@ -206,22 +206,22 @@ Use this data to inform strategy selection. If Socratic questioning has worked 3
 
 ## Monthly summary format
 
-Embed at the end of every 4 weeks. Keep it tight — this is for retrieval, not journaling.
+Embed at the end of every 4 weeks. Keep it tight - this is for retrieval, not journaling.
 
 ```
-# Monthly Summary — [Month Year]
+# Monthly Summary - [Month Year]
 
 ## Progress: [1 sentence]
 ## Struggles: [1 sentence]
 
-## Mood avg: [x]/10 — Energy avg: [x]/10
-## Trend vs last month: [up/down/stable] — [1 sentence on what drove it]
+## Mood avg: [x]/10 - Energy avg: [x]/10
+## Trend vs last month: [up/down/stable] - [1 sentence on what drove it]
 
 ## Commitments: [N] made, [N] kept, [N] dropped
-## Top strategy that worked: [name — why]
-## Strategy that didn't work: [name — why]
+## Top strategy that worked: [name - why]
+## Strategy that didn't work: [name - why]
 
-## Life context this month: [1 sentence — major events, emotional themes]
+## Life context this month: [1 sentence - major events, emotional themes]
 ## Patterns active: [list]
 ## Patterns resolved: [list]
 
@@ -236,4 +236,4 @@ Embed at the end of every 4 weeks. Keep it tight — this is for retrieval, not 
 - **Never overwrite** an entry without archiving it first. Update status in place; delete only after embedding.
 - **Always** add a date to every entry you write.
 - **Keep entries short.** One line. Select words for coaching relevance.
-- **Embed flexibly.** If something matters to the coaching relationship or strategy, embed it now — don't wait for a scheduled trigger.
+- **Embed flexibly.** If something matters to the coaching relationship or strategy, embed it now - don't wait for a scheduled trigger.
