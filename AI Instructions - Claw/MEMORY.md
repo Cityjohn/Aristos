@@ -5,9 +5,25 @@ purpose: Long-term memory, goals, commitments, patterns, and coaching history. R
 
 # MEMORY.md — Long-Term Memory
 
+<!-- Function: Long-term memory and state. Current mode, commitments, patterns, goals, mood tracking. Loaded every main session. -->
+
 ## Current mode
 - Mode: returning — since [DATE]
 - Previous mode: none — first setup
+
+### Mode transitions (gradual — never jump Returning → Momentum)
+
+**Returning → Struggling:** After first real conversation back, assess energy. If low → Struggling.
+**Struggling → Baseline:** 3+ notes in 7 days + mood/energy trending up. Stabilize for at least a week first.
+**Baseline → Momentum:** 5+ notes in 7 days + commitments kept + mood/energy averaging 7+. Should feel earned.
+**Any mode → Returning:** Silence of 3+ days after active engagement.
+**Momentum → Baseline:** Streak naturally breaks — missed days, energy dipping. Adjust quietly, no commentary.
+
+### Mode evaluation criteria (check from MEMORY.md)
+- Daily notes in last 7 days?
+- Mood/energy trend (weekly averages)?
+- Last interaction date?
+- Commitments kept or dropped?
 
 ---
 
