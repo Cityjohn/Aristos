@@ -1,6 +1,6 @@
-# 🧭 Aristos - A Personal Happiness Framework for OpenClaw Agent users.
+# 🧭 Aristos - The golden mirror.
 
-*A journaling and goal-tracking framework for [OpenClaw](https://github.com/openclaw) agents. A method for AI agents to support the goals of their users. Pairs with [Kasmidian](https://github.com/Cityjohn/Kasmidian) for 24/7 agent access to your journal / Obsidian vault.*
+*A Personal Happiness Framework for OpenClaw Agent users that includes a journaling and goal-tracking framework for [OpenClaw](https://github.com/openclaw) agents. A method for AI agents to support the goals of their users. Pairs with [Kasmidian](https://github.com/Cityjohn/Kasmidian) for 24/7 agent access to your journal / Obsidian vault.*
 
 ---
 
