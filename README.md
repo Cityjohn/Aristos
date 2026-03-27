@@ -1,10 +1,10 @@
-# 🧭 Aristos - A Personal Happiness Framework for OpenClaw Agents
+# 🧭 Aristos - The golden mirror.
 
-*A journaling and goal-tracking framework for [OpenClaw](https://github.com/openclaw) agents. A method for AI agents to support the goals of their users. Pairs with [Kasmidian](https://github.com/Cityjohn/Kasmidian) for 24/7 agent access to your journal / Obsidian vault.*
+*A Personal Happiness Framework for OpenClaw Agent users that includes a journaling and goal-tracking framework for [OpenClaw](https://github.com/openclaw) agents. A method for AI agents to support the goals of their users. Pairs with [Kasmidian](https://github.com/Cityjohn/Kasmidian) for 24/7 agent access to your journal / Obsidian vault.*
 
 ---
 
-**Aristos is an agentic framework and journal template, not software.** It's a structured set of rules, prompts, templates, and conventions that teaches any compatible AI agent how to act as a personal coach — one that reads your very simple and efficient 2 minute a day journal, remembers your patterns, and actually gives a shit.
+**Aristos is an agentic framework and journal template, not software.** It's a structured set of rules, prompts, templates, and conventions that teaches any compatible AI agent how to act as a personal coach - one that reads your very simple and efficient 2 minute a day journal, remembers your patterns, and actually gives a shit.
 
 The agent persona is called **Aris**. Aristos is the framework that makes Aris possible: the journaling structure, the adaptive coaching logic, the memory schema, the outreach rules. Any AI agent that follows the Aristos conventions becomes Aris.
 
@@ -20,15 +20,17 @@ This isn't a productivity dashboard. It's a companion that grows with you.
 
 🧠 **Adaptive Coaching** — Four modes (returning, struggling, baseline, momentum) that shift based on your actual behavior, not your intentions.
 
-🎯 **Strategy Rotation** — 20+ coaching strategies drawn from ACT, behavioral psychology, and implementation science. Tracks what works for *you*.
+🎯 **Strategy Rotation with Outcome Tracking** — 20+ coaching strategies drawn from ACT, behavioral psychology, and implementation science. Tracks what works for *you* and rotates accordingly.
 
 📓 **Journal Integration** — Reads your daily, weekly, and yearly notes. Spots patterns you miss. Follows up on things you said you'd do.
 
-💬 **Proactive Outreach** — Reaches out on its own — morning check-ins, evening reviews, casual pings. Cron-based, isolated from your main conversation.
+💬 **Contextual Coaching** — Coaching nudges fire on schedule but respond from the main conversation with full context. No robotic "how's your morning?" from a blank slate.
 
-🔮 **Predictive Coaching** — Uses historical data to anticipate problems before they happen.
+🔮 **Predictive Coaching** — Uses historical data to anticipate problems before they happen. Knows your risky days, your seasonal dips, your commitment patterns.
 
-🫶 **Trauma-Aware** — Understands that resistance isn't laziness. Knows when to push and when to just be there.
+🫶 **Trauma-Aware** — Understands that resistance isn't laziness. Knows when to push and when to just be there. Never shames. Never lectures.
+
+🧠 **Knowledge Graph** — Semantic search + wiki link graph traversal across all journal entries and coaching notes. Learns your patterns by association, not just keywords.
 
 ---
 
@@ -38,16 +40,16 @@ This isn't a productivity dashboard. It's a companion that grows with you.
 
 | Guide | What it covers |
 |-------|---------------|
-| [Setup](guides/setup.md) | Installation, folder structure, configuration, vault access |
-| [Journal](guides/journal.md) | Templates, what each field means, why 2 minutes is enough |
+| [Setup](guides/setup.md) | Installation, folder structure, file reference, vault access |
+| [Journal](guides/journal.md) | Examples, templates, what each field means, why 2 minutes is enough |
 
 ### Reference — How it works under the hood
 
 | Reference | What it covers |
 |-----------|---------------|
-| [Architecture](reference/architecture.md) | File loading, token costs, design decisions |
-| [Cron Jobs](reference/cron.md) | Outreach architecture, job schedule, probability logic |
-| [Vault Memory](reference/vault-memory.md) | Vector search + graph traversal for Obsidian vault |
+| [Architecture](reference/architecture.md) | Knowledge graph, file loading, token costs, design decisions |
+| [Cron Jobs](reference/cron.md) | Outreach architecture, nudges, outcome tracking, session-state.json |
+| [Vault Memory](reference/vault-memory.md) | Vector search + graph traversal technical specification |
 
 ---
 
