@@ -27,6 +27,7 @@ This isn't a productivity dashboard. It's a companion that grows with you.
 - [🔄 How file loading works](#-how-file-loading-works)
 - [💰 Token load per invocation](#-token-load-per-invocation)
 - [⏰ Cron-based outreach](#-cron-based-outreach)
+- [🧠 Coaching memory](#-coaching-memory)
 - [🔌 Agent vault access](#-agent-vault-access)
 - [🏗️ Key design decisions](#️-key-design-decisions)
 
@@ -104,14 +105,14 @@ The agent tracks all of it over time - output, energy, what you keep postponing,
 🧠 **Adaptive Coaching**
 Four modes - returning, struggling, baseline, momentum - that shift based on your actual behavior, not your intentions.
 
-🎯 **Strategy Rotation**
-20+ coaching strategies drawn from ACT, behavioral psychology, and implementation science. Tracks what works for *you* and rotates accordingly.
+🎯 **Strategy Rotation with Outcome Tracking**
+20+ coaching strategies drawn from ACT, behavioral psychology, and implementation science. Tracks what works for *you specifically* and rotates accordingly. See [Coaching memory](#-coaching-memory).
 
 📓 **Journal Integration**
 Reads your daily, weekly, and yearly notes. Spots patterns you miss. Follows up on things you said you'd do.
 
-💬 **Proactive Outreach**
-Reaches out on its own - morning check-ins, evening reviews, casual pings - like a friend who texts first. Cron-based, isolated from your main conversation.
+💬 **Contextual Coaching**
+Coaching nudges fire on schedule but respond from the main conversation - with full context of what you and the agent have been discussing. No robotic "how's your morning?" from a blank slate.
 
 🔮 **Predictive Coaching**
 Uses historical data to anticipate problems before they happen. Knows your risky days, your seasonal dips, your commitment patterns.
@@ -250,7 +251,7 @@ Two minutes of structured writing per day gives the agent everything it needs to
 | `MEMORY_SCHEMA.md`      | Tool-read via `read_file` | Memory systems, archival rules                  |
 | `JOURNAL_READING.md`    | Tool-read via `read_file` | How to parse journal entries                    |
 | `CRON.md`               | Tool-read via `read_file` | Cron job setup, prompts, probability logic      |
-| `session-state.json`    | Auto-created at runtime   | Tracks activity, coaching state, random count   |
+| `session-state.json`    | Auto-created at runtime   | Tracks activity, coaching state, conversation   |
 
 ### Setup files (fill in these)
 
@@ -315,51 +316,117 @@ The system is designed to minimize token cost by only loading what's needed.
 
 ## ⏰ Cron-based outreach
 
-All proactive outreach uses **isolated cron jobs** - not the native heartbeat. This prevents heartbeat interrupts from blocking your main conversation.
+All proactive outreach uses **cron jobs** that send triggers to the main conversation - not isolated sessions that fire blind. This is the key architectural difference from most agent coaching systems.
 
-Full job definitions, prompts, probability logic, and setup instructions are in `CRON.md`. This section covers the high-level architecture.
-
-### Architecture
+### Architecture: Coaching nudges vs isolated sessions
 
 ```
-┌─────────────────────────────────────────────────┐
-│                  Cron Jobs                       │
-│                                                  │
-│  🌅 8:00 AM   morning coaching check-in          │
-│  🎲 11:15 AM  random engagement (probabilistic)  │
-│  ☀️ 12:35 PM  noon follow-up                     │
-│  🎲 3:00 PM   random engagement (probabilistic)  │
-│  🌙 6:00 PM   evening coaching wrap-up            │
-│  🎲 8:30 PM   random engagement (probabilistic)  │
-│  📋 9:00 PM   evening review (daily note check)  │
-│  📅 Wed 10 AM  midweek check                     │
-│  📝 Sun 6 PM   weekly reflection                 │
-│  🔧 2:00 AM   nightly maintenance                │
-│  📧 every 30m  email check                       │
-│                                                  │
-│  Each job reads session-state.json for context   │
-│  Each job writes back to session-state.json      │
-└─────────────────────────────────────────────────┘
+❌ OLD (isolated sessions):
+┌──────────────┐     ┌─────────────────────┐
+│  Cron fires   │────▶│  Isolated session    │──▶ Reads files ──▶ Sends generic message
+│  at 8:00 AM   │     │  (no conversation    │     from MEMORY   that ignores what you
+│               │     │   context)           │     and daily     were actually talking
+│               │     │                      │     notes         about
+└──────────────┘     └─────────────────────┘
+
+✅ NEW (contextual nudges):
+┌──────────────┐     ┌─────────────────────┐
+│  Cron fires   │────▶│  Trigger sent to     │──▶ Agent responds WITH full conversation
+│  at 8:00 AM   │     │  main session        │     context — references what you were
+│               │     │  (Telegram)          │     discussing, your tone, your patterns
+└──────────────┘     └─────────────────────┘
 ```
 
-### How it works
+### Why nudges, not isolated sessions
 
-- **Isolated sessions** - each cron runs independently, never blocks the main chat
-- **session-state.json** - shared state file tracks `lastActivity`, coaching sent/responses, random count
-- **Activity awareness** - random crons check `lastActivity` timestamp; skip if user was active in last 90 minutes
-- **Adaptive probability** - random engagement starts at 15% and climbs based on unanswered coaching messages and silence duration. See `CRON.md` for the full formula and why it works.
-- **Self-cleaning** - nightly maintenance archives old data, rolls up mood/energy, enforces memory limits
+Isolated sessions have zero context of your ongoing conversation. They read some files, generate a generic coaching message, and send it. It's like getting a text from someone who wasn't listening.
 
-### Two vibes
+Coaching nudges fire on schedule but the **response comes from the main session** - which has full conversation history, emotional context, and real-time awareness of what's going on. The agent references what you were talking about, matches your tone, and responds like a friend who was actually paying attention.
 
-The user typically has **two sides**: a playful/joking side AND a serious philosophical side. Outreach should reflect both:
-- **Playful:** Absurd observations, weird facts, humor
-- **Philosophical:** Markets, innovation, human psychology, societal critique, evolutionary behavior, deep abstract concepts
+### The session-state.json bridge
+
+`session-state.json` is the shared state between cron jobs and the main session:
+
+```json
+{
+  "date": "2026-03-26",
+  "lastActivity": "2026-03-26T22:14:00Z",
+  "coachingSent": ["2026-03-26T07:00:00Z"],
+  "coachingResponses": [],
+  "randomSent": 1,
+  "activeNow": true,
+  "recentTopics": [
+    "Website rebuild in Astro",
+    "CMS research: Payload vs Sanity",
+    "OpenPencil design tool"
+  ],
+  "tone": "engaged",
+  "topicShifts": 3,
+  "activeCommitment": "Dominius",
+  "lastCommitmentMention": "2026-03-26T14:00:00Z",
+  "strategyOutcomes": [
+    {
+      "date": "2026-03-26",
+      "strategy": "casual-opener",
+      "context": "dominius-deadline",
+      "response": "no-response",
+      "effective": false
+    }
+  ]
+}
+```
+
+| Field | Purpose |
+|---|---|
+| `lastActivity` | When user was last active — jobs skip if within 90 minutes |
+| `coachingSent` | Timestamps of coaching nudges sent today |
+| `coachingResponses` | Whether user responded to coaching nudges |
+| `randomSent` | Count of random engagement messages today (cap: 3) |
+| `recentTopics` | Last 3-5 conversation topics — coaching references these |
+| `tone` | Current conversation tone: chatty / neutral / heavy |
+| `topicShifts` | Number of topic changes this session (avoidance signal) |
+| `activeCommitment` | What the user said they'd work on |
+| `lastCommitmentMention` | When they last referenced it (focus drift detection) |
+| `strategyOutcomes` | Which coaching strategies worked/failed (see below) |
+
+### Job types
+
+| Job | Time | Type | How it works |
+|---|---|---|---|
+| `morning-checkin` | 8:00 AM | Coaching nudge | Sends `[coaching-nudge:morning]` to main session |
+| `random-engagement-morning` | 11:15 AM | Random | Isolated, probability-based, checks activity |
+| `noon-followup` | 12:35 PM | Coaching nudge | Sends `[coaching-nudge:noon]` to main session |
+| `random-engagement-afternoon` | 3:00 PM | Random | Isolated, probability-based, checks activity |
+| `evening-review` | 9:00 PM | Coaching nudge | Sends `[coaching-nudge:evening]` to main session |
+| `random-engagement-evening` | 8:30 PM | Random | Isolated, probability-based, checks activity |
+| `midweek-check` | Wed 10 AM | Coaching nudge | Sends `[coaching-nudge:midweek]` to main session |
+| `weekly-reflection` | Sun 6 PM | Isolated | Reads weekly notes, writes analysis |
+| `nightly-maintenance` | 2:00 AM | Isolated | Archives, cleans, updates patterns |
+| `email-check` | Every 3h | Isolated | Checks for new emails |
+
+**Coaching nudges** → `sessionTarget: "main"` — deliver to the active conversation
+**Random engagement** → `sessionTarget: "isolated"` — separate session, checks activity first
+**Maintenance/reflection** → `sessionTarget: "isolated"` — background work
+
+### How the agent handles nudges
+
+When the main session receives `[coaching-nudge:morning]`, the agent:
+
+1. Checks `session-state.json` for `recentTopics`, `tone`, `activeCommitment`
+2. References what you and the agent were actually talking about
+3. Responds as a natural check-in, not a scheduled message
+4. Updates `coachingSent` timestamp
+
+**Example nudges:**
+- After a coding session: "You've been grinding on that Astro site for hours. Still in the zone or time for a break?"
+- After frustration: "That CMS hunt was rough. Did you land on anything or still circling?"
+- After silence: "Quiet day. Everything okay, or just heads-down on something?"
+- Morning after late night: "You were up till 5 AM. How are you even awake?"
 
 ### Setup
 
 1. Replace placeholders in `CRON.md` (timezone, chat ID, agent name, user name)
-2. Copy the job JSON format from `CRON.md` and create each job
+2. Create each cron job — coaching nudges use `sessionTarget: "main"`, others use `"isolated"`
 3. Create `session-state.json` in your workspace root:
 
 ```json
@@ -368,11 +435,76 @@ The user typically has **two sides**: a playful/joking side AND a serious philos
   "lastActivity": null,
   "coachingSent": [],
   "coachingResponses": [],
-  "randomSent": 0
+  "randomSent": 0,
+  "activeNow": false,
+  "recentTopics": [],
+  "tone": "neutral",
+  "topicShifts": 0,
+  "activeCommitment": null,
+  "lastCommitmentMention": null,
+  "strategyOutcomes": []
 }
 ```
 
-The nightly maintenance resets this file each night.
+The nightly maintenance resets daily fields each night.
+
+---
+
+## 🧠 Coaching memory
+
+Aristos tracks which coaching strategies actually work for each specific person and adjusts over time. This is what separates it from generic AI coaching — it learns what lands and what doesn't.
+
+### Outcome tracking in session-state.json
+
+After each coaching nudge, the agent logs the outcome in `strategyOutcomes`:
+
+```json
+{
+  "date": "2026-03-26",
+  "strategy": "implementation-intentions",
+  "context": "dominius-avoidance",
+  "response": "engaged",
+  "effective": true
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `strategy` | Which strategy was used (from STRATEGIES.md) |
+| `context` | What pattern it was applied to |
+| `response` | `engaged` / `no-response` / `deflected` |
+| `effective` | Did it lead to action within 24h? |
+
+### How it improves coaching
+
+**Nightly review** (during maintenance):
+- Aggregate this week's outcomes by strategy
+- Update MEMORY.md strategy log with results
+- Flag ineffective strategies: "Socratic questioning: 0/4 responses. Implementation intentions: 3/4 responses."
+- Recommend rotation: "Use implementation intentions more. Drop Socratic for two weeks."
+
+**Real-time adaptation**:
+- Before responding to a coaching nudge, the agent checks recent outcomes
+- If a strategy has failed 2+ times recently, skip it
+- If a strategy consistently works, prioritize it
+
+### Example strategy log in MEMORY.md
+
+| Date | Pattern | Strategy tried | Result | Next move |
+|---|---|---|---|---|
+| 03-26 | Dominius avoidance | Casual opener | No response | Try implementation intentions |
+| 03-25 | CMS distraction | Humor redirect | Engaged, pivoted back | Use more humor for distraction |
+| 03-24 | Low energy after BCS | Presence (no agenda) | John opened up | Presence works for post-BCS days |
+
+### The loop
+
+```
+Coach with strategy → Log outcome → Nightly analysis → Update rotation → Coach with better strategy
+                                                                                       ↑
+                                                                                       └─── Repeat forever
+```
+
+Over weeks, the agent builds a personalized coaching playbook unique to each user. What works for one person (humor, directness) might fail for another (Socratic questioning, gentle nudges). The framework discovers this automatically.
 
 ---
 
@@ -402,6 +534,14 @@ This means the vault - the folder containing your `Journal/` and `AI Instruction
 
 ## 🏗️ Key design decisions
 
+**Why coaching nudges instead of isolated sessions?**
+
+Isolated sessions have zero conversation context. They generate generic messages that ignore what the user was actually talking about. Coaching nudges trigger the main session, which has full history and responds contextually - like a friend who was paying attention, not a cron job with amnesia.
+
+**Why outcome tracking?**
+
+Without tracking which strategies work, the agent rotates blindly. The same ineffective approach gets repeated. Outcome tracking creates a feedback loop: coach → log → analyze → adapt → coach better. Over weeks, the agent builds a personalized playbook unique to each user.
+
 **Why split into bootstrap and on-demand files?**
 
 Bootstrap files (~7,200 tokens) guarantee the agent always has identity, rules, and current state. On-demand files (STRATEGIES, PREDICTIVE, etc.) are only loaded when relevant - a coaching session needs them, an outreach ping doesn't. This keeps everyday invocations lean.
@@ -418,13 +558,9 @@ The vector DB is great for retrieval by similarity but bad for structured curren
 
 Without it, the memory file grows indefinitely. The 30-day cycle moves history to the vector DB (searchable but not always loaded) and keeps the working file small.
 
-**Why log strategies?**
+**Why session-state.json as a shared scratchpad?**
 
-Without a strategy log, the AI repeats the same approach to the same pattern. The log enables rotation and tracks what actually works for this specific person.
-
-**Why cron instead of native heartbeat?**
-
-Cron jobs run in isolated sessions - they never interrupt the main conversation. The native heartbeat can cause context bleed and interrupt mid-thought. Cron gives precise timing control and prevents the agent from going quiet during important conversations.
+It's the one file that's read by both cron jobs and the main session. Activity timestamps, coaching state, conversation topics, and strategy outcomes all live here. It's the bridge between scheduled events and real-time conversation.
 
 ---
 
